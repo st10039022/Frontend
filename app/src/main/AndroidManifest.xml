@@ -16,7 +16,7 @@
 
         <activity android:name=".MainActivity" android:exported="true" />
 
-        <activity android:name=".DummyActivity" />
+        <activity android:name=".DashboardActivity" />
 
         <activity android:name=".SplashActivity"
             android:exported="true">
