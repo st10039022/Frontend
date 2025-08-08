@@ -18,6 +18,8 @@
 
         <activity android:name=".DashboardActivity" />
 
+        <activity android:name=".DonateActivity" />
+
         <activity android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
