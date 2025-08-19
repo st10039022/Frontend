@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DashboardFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_blank_fragment" />
+
+    <Button
+        android:id="@+id/btn_apply_volunteer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply to Volunteer"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/btn_admin_pending_applications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manage Pending Applications"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="80dp"/>
+
+    <Button
+        android:id="@+id/btn_admin_approved_volunteers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Approved Volunteers"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="20dp"/>
+
+</FrameLayout>
