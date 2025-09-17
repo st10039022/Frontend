@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:hint="@string/volunteer_name"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/et_email"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:layout_marginTop="16dp"
+            android:hint="@string/volunteer_email"
+            android:inputType="textEmailAddress" />
+
+        <Button
+            android:id="@+id/btn_select_availability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/volunteer_availability"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tv_selected_dates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_marginTop="8dp" />
+
+        <EditText
+            android:id="@+id/et_why"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:hint="@string/volunteer_why"
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:layout_marginTop="16dp" />
+
+        <EditText
+            android:id="@+id/et_experience"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:hint="@string/volunteer_experience"
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:layout_marginTop="16dp" />
+
+
+
+        <Button
+            android:id="@+id/btn_submit_application"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/submit_application"
+            android:layout_marginTop="24dp" />
+
+    </LinearLayout>
+</ScrollView>

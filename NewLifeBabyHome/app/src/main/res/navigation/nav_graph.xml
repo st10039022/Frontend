@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/adminLoginFragment">
+
+    <!-- Removed loginFragment and registerFragment as they are no longer needed -->
+    <fragment
+        android:id="@+id/volunteerApplicationFragment"
+        android:name="vcmsa.projects.newlifebabyhome.VolunteerApplicationFragment"
+        android:label="Apply to Volunteer"
+        tools:layout="@layout/fragment_volunteer_application" />
+
+    <!-- Add action from dashboard to volunteer application -->
+
+    <fragment
+        android:id="@+id/adminLoginFragment"
+        android:name="vcmsa.projects.newlifebabyhome.AdminLoginFragment"
+        android:label="Admin Login"
+        tools:layout="@layout/fragment_admin_login" >
+        <action
+            android:id="@+id/action_adminLoginFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminVolunteerApplicationsFragment"
+        android:name="vcmsa.projects.newlifebabyhome.AdminVolunteerApplicationsFragment"
+        android:label="Pending Applications"
+        tools:layout="@layout/fragment_admin_volunteer_applications" />
+    <fragment
+        android:id="@+id/approvedVolunteersFragment"
+        android:name="vcmsa.projects.newlifebabyhome.ApprovedVolunteersFragment"
+        android:label="Approved Volunteers"
+        tools:layout="@layout/fragment_approved_volunteers" />
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="vcmsa.projects.newlifebabyhome.DashboardFragment"
+        android:label="fragment_dashboard"
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_volunteerApplicationFragment"
+            app:destination="@id/volunteerApplicationFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_adminVolunteerApplicationsFragment"
+            app:destination="@id/adminVolunteerApplicationsFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_approvedVolunteersFragment"
+            app:destination="@id/approvedVolunteersFragment" />
+    </fragment>
+
+</navigation>

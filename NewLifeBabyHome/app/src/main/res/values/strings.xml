@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">NewLifeBabyHome</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="apply_to_volunteer">Apply to Volunteer</string>
+    <string name="volunteer_name">Full Name</string>
+    <string name="volunteer_email">Email</string>
+    <string name="volunteer_availability">Availability</string>
+    <string name="volunteer_why">Why would you like to volunteer?</string>
+    <string name="volunteer_experience">Do you have any experience? If so, specify.</string>
+    <string name="volunteer_upload_id">Upload an image of your ID</string>
+    <string name="submit_application">Submit Application</string>
+</resources>
