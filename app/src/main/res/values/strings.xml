@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">SplashScreen</string>
+
+    <string name="volunteer_name">Name</string>
+    <string name="volunteer_email">Email</string>
+    <string name="volunteer_availability">Availability</string>
+    <string name="volunteer_why">Why do you want to volunteer?</string>
+    <string name="volunteer_experience">Experience</string>
+    <string name="submit_application">Submit Application</string>
 </resources>
