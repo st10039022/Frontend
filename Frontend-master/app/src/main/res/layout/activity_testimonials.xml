@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2E2E2E">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#2E2E2E"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Testimonials"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <!-- White Content Card -->
+
+        <!-- Bottom Navigation -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Hero Illustration -->
+
+            <!-- Hero Text -->
+
+            <ImageView
+                android:layout_width="254dp"
+                android:layout_height="129dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:contentDescription="couple"
+                android:scaleType="fitCenter"
+                android:src="@drawable/couple" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:text="Hear Some Heartwarming Stories Of Families Whose Lives Were Forever Changed Through Adoption."
+                android:textColor="#333333"
+                android:textSize="14sp" />
+
+            <!-- The Smith Family Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:text="The Smith Family"
+                android:textColor="#4ECDC4"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Smith Family Photo -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="210dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/couple2"
+                android:contentDescription="Smith family photo"
+                android:scaleType="centerCrop"
+                android:src="@drawable/couple2" />
+
+            <!-- Smith Family Testimonial -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:justificationMode="inter_word"
+                android:lineSpacingExtra="3dp"
+                android:text="From the moment we held Laila in our arms, we knew our hearts had found something truly special. She wasn't just joining our family—she was the missing piece we never knew we needed. We're endlessly grateful to New Life Baby Home for the love, care, and hope they gave Laila before she found her forever home with us. Thank you for helping our family become whole."
+                android:textColor="#666666"
+                android:textSize="13sp" />
+
+            <!-- The Abbott Family Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:text="The Abbott Family"
+                android:textColor="#4ECDC4"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Abbott Family Photo -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="210dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/couple4"
+                android:contentDescription="Abbott family photo"
+                android:scaleType="centerCrop"
+                android:src="@drawable/couple4" />
+
+            <!-- Abbott Family Testimonial -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:justificationMode="inter_word"
+                android:lineSpacingExtra="3dp"
+                android:text="When we first met Marcus, we knew instantly that our family was complete. The journey with New Life Baby Home was filled with compassion and support. They didn't just help us adopt a child—they helped us understand what it means to be a family built on love, not just blood. Marcus has brought so much joy and laughter into our lives. We're forever thankful for this incredible blessing."
+                android:textColor="#666666"
+                android:textSize="13sp" />
+
+            <!-- The Johnson Family Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:text="The Johnson Family"
+                android:textColor="#4ECDC4"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Johnson Family Photo -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="210dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/couple5"
+                android:contentDescription="Johnson family photo"
+                android:scaleType="centerCrop"
+                android:src="@drawable/couple5" />
+
+            <!-- Johnson Family Testimonial -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:justificationMode="inter_word"
+                android:lineSpacingExtra="3dp"
+                android:text="Adoption was always part of our dream, and New Life Baby Home made that dream a beautiful reality. From the first phone call to bringing Emma home, every step was handled with such care and professionalism. Emma has filled our home with laughter and our hearts with a love we never knew possible. Thank you for making us a family of three."
+                android:textColor="#666666"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_home_bottom"
+                android:scaleType="center" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_search_bottom"
+                android:scaleType="center" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_notification_bottom"
+                android:scaleType="center" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_profile_bottom"
+                android:scaleType="center" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2E2E2E">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#2E2E2E"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Events"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <!-- White Content Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Calendar Header -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="May 2025"
+                    android:textColor="#333333"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="&lt;"
+                    android:textColor="#666666"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:text="&gt;"
+                    android:textColor="#666666"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="8dp" />
+            </RelativeLayout>
+
+            <!-- Calendar Week Headers -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sun"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Mon"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tue"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Wed"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Thu"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Fri"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sat"
+                    android:textColor="#666666"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Calendar Grid -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="20dp">
+
+                <!-- Week 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="1" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="2" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="3" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Week 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="4" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="5" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="6" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="7" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="8" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="9" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="10" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Week 3 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="11" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="12" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="13" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="14" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="15" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="16" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="17" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Week 4 with selected date -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:text="18"
+                        android:textColor="@android:color/white"
+                        android:gravity="center"
+                        android:textSize="13sp"
+                        android:background="@drawable/date_selected" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="19" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="20" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="21" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="22" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="23" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="24" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Week 5 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="25" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="26" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="27" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="28" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="29" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="30" android:textColor="#333333" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="31" android:textColor="#999999" android:gravity="center" android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Week 6 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="1" android:textColor="#999999" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="2" android:textColor="#999999" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="3" android:textColor="#999999" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="4" android:textColor="#999999" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="5" android:textColor="#999999" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="" />
+                    <TextView android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:text="" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Upcoming Events Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upcoming events"
+                android:textColor="#333333"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Event 1: Baby Care 101 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                android:background="@drawable/event_card_blue"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Baby Care 101"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Wednesday - 15/05/25 - 10:00"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="Baby care illustration"
+                    android:src="@drawable/babycare" />
+            </LinearLayout>
+
+            <!-- Event 2: Adoption Awareness Drive -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                android:background="@drawable/event_card_pink"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Adoption Awareness Drive"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Saturday - 21/05/25 - 11:00"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/adoption"
+                    android:contentDescription="Adoption awareness illustration" />
+            </LinearLayout>
+
+            <!-- Event 3: Formula Drive -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                android:background="@drawable/event_card_purple"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Formula Drive"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Tuesday - 24/05/25"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/formula"
+                    android:contentDescription="Formula drive illustration" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Bottom Navigation -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_home_bottom"
+                android:scaleType="center" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_search_bottom"
+                android:scaleType="center" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_notification_bottom"
+                android:scaleType="center" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_profile_bottom"
+                android:scaleType="center" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+
+
