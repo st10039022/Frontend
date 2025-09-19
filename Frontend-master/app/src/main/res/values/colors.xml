@@ -6,4 +6,6 @@
     <color name="grey">#757575</color>
     <color name="circle_background_color">#E0F7FA</color>
 
+    <color name="teal_button">#6CAFBB</color>
+
 </resources>
