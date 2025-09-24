@@ -1,69 +1,321 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#2E2E2E">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/et_name"
+        <!-- Header -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:hint="@string/volunteer_name"
-            android:inputType="textPersonName" />
+            android:layout_height="60dp"
+            android:background="#2E2E2E"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp">
 
-        <EditText
-            android:id="@+id/et_email"
-            android:layout_width="match_parent"
-            android:layout_height="68dp"
-            android:layout_marginTop="16dp"
-            android:hint="@string/volunteer_email"
-            android:inputType="textEmailAddress" />
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Back" />
 
-        <Button
-            android:id="@+id/btn_select_availability"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/volunteer_availability"
-            android:layout_marginTop="16dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Apply to Volunteer"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_selected_dates"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:layout_marginTop="8dp" />
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_more"
+                android:contentDescription="More" />
+        </RelativeLayout>
 
-        <EditText
-            android:id="@+id/et_why"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:hint="@string/volunteer_why"
-            android:inputType="textMultiLine"
-            android:gravity="top"
-            android:layout_marginTop="16dp" />
-
-        <EditText
-            android:id="@+id/et_experience"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:hint="@string/volunteer_experience"
-            android:inputType="textMultiLine"
-            android:gravity="top"
-            android:layout_marginTop="16dp" />
-
-
-
-        <Button
-            android:id="@+id/btn_submit_application"
+        <!-- White Content Card -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/submit_application"
-            android:layout_marginTop="24dp" />
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="20dp">
 
+            <!-- Hero Section with Illustration -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/hero_background"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Becoming a volunteer?"
+                        android:textColor="#5A9BA8"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Kindly complete this form below,\nand a member of our team will\nreview your application and get\nback to you as soon as possible."
+                        android:textColor="#6B6B6B"
+                        android:textSize="11sp"
+                        android:lineSpacingExtra="1dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="85dp"
+                    android:layout_height="94dp"
+                    android:layout_marginStart="12dp"
+                    android:contentDescription="Volunteer character"
+                    android:src="@drawable/babyvolunteer1" />
+            </LinearLayout>
+
+            <!-- Name Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name*"
+                android:textColor="#333333"
+                android:textSize="13sp"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/et_name"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/input_field_background"
+                android:hint="Tanzim Kabir"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textSize="13sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Email Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textColor="#333333"
+                android:textSize="13sp"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/input_field_background"
+                android:hint="name@example.com"
+                android:inputType="textEmailAddress"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textSize="13sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Availability Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Availability"
+                android:textColor="#333333"
+                android:textSize="13sp"
+                android:layout_marginBottom="6dp" />
+
+            <RelativeLayout
+                android:id="@+id/rl_select_availability"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/input_field_background"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:id="@+id/tv_selected_dates"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:hint="12/09/25 - 10/10/25"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="40dp"
+                    android:textSize="13sp"
+                    android:textColor="#333333" />
+
+                <ImageView
+                    android:id="@+id/btn_select_availability"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="12dp"
+                    android:src="@drawable/ic_calendar"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="Calendar" />
+            </RelativeLayout>
+
+            <!-- Why Volunteer Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Why would you like to volunteer with us ?"
+                android:textColor="#333333"
+                android:textSize="13sp"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/et_why"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@drawable/input_field_background"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="10dp"
+                android:textSize="13sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Experience Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Do you have any Experience with toddlers; if\nso, please specify?"
+                android:textColor="#333333"
+                android:textSize="13sp"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/et_experience"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@drawable/input_field_background"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="10dp"
+                android:textSize="13sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="14dp" />
+
+            <!-- File Upload Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please upload an image/scan of any form of\npersonal identification:"
+                android:textColor="#333333"
+                android:textSize="13sp"
+                android:layout_marginBottom="6dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/input_field_background"
+                android:layout_marginBottom="20dp">
+
+                <TextView
+                    android:id="@+id/tv_selected_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Upload Here"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:textColor="#999999"
+                    android:textSize="13sp"
+                    android:background="?android:attr/selectableItemBackground" />
+
+                <Button
+                    android:id="@+id/btn_upload_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:text=""
+                    android:textSize="0sp" />
+            </RelativeLayout>
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/btn_submit_application"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="@drawable/submit_button_background"
+                android:text="Submit Volunteer Application"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <!-- Bottom Navigation -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_home_bottom"
+                android:scaleType="center"
+                android:contentDescription="Home" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_search_bottom"
+                android:scaleType="center"
+                android:contentDescription="Search" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_notification_bottom"
+                android:scaleType="center"
+                android:contentDescription="Notifications" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_profile_bottom"
+                android:scaleType="center"
+                android:contentDescription="Profile" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

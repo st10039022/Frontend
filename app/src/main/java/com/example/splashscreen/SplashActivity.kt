@@ -12,9 +12,9 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        // Delay 2 seconds then move to DashboardActivity
+        // Delay 2 seconds then move to MainActivity
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, DashboardActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
             finish() // Close splash activity
         }, 2000) // 2000ms = 2 seconds
     }

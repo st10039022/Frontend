@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Scrollable content: Search Bar, Articles, Spotlight -->
+    <!-- Scrollable content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -55,7 +55,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Latest Articles Title -->
+            <!-- Latest Articles -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,7 +65,6 @@
                 android:textColor="@color/light_blue"
                 android:layout_marginBottom="12dp"/>
 
-            <!-- Article Preview Card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,7 +104,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Spotlight Title -->
+            <!-- Spotlight -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -115,7 +114,6 @@
                 android:textColor="@color/light_blue"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Spotlight -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -127,7 +125,7 @@
                     android:layout_height="150dp"
                     android:orientation="horizontal">
 
-                    <!-- Card 1 -->
+                    <!-- Spotlight Cards (3) -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="220dp"
                         android:layout_height="match_parent"
@@ -152,6 +150,7 @@
                                 android:layout_marginBottom="8dp" />
 
                             <Button
+                                android:id="@+id/buttonDonateSpotlight"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Donate"
@@ -160,7 +159,6 @@
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Card 2 -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="220dp"
                         android:layout_height="match_parent"
@@ -185,6 +183,7 @@
                                 android:layout_marginBottom="8dp" />
 
                             <Button
+                                android:id="@+id/buttonEventsSpotlight"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Events"
@@ -193,7 +192,6 @@
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Card 3 -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="220dp"
                         android:layout_height="match_parent"
@@ -217,6 +215,7 @@
                                 android:layout_marginBottom="8dp" />
 
                             <Button
+                                android:id="@+id/buttonVolunteerSpotlight"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Volunteer"
@@ -228,171 +227,176 @@
                 </LinearLayout>
             </HorizontalScrollView>
 
+            <!-- Icon Grid -->
+            <GridLayout
+                android:id="@+id/iconGrid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:alignmentMode="alignMargins"
+                android:useDefaultMargins="true"
+                android:padding="16dp"
+                android:background="@color/white">
+
+                <!-- Donate -->
+                <LinearLayout
+                    android:id="@+id/buttonDonateDashboard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_credit_card"
+                        android:background="@drawable/circle_background_red"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Donate"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:paddingTop="8dp"/>
+                </LinearLayout>
+
+                <!-- Volunteer -->
+                <LinearLayout
+                    android:id="@+id/buttonVolunteerDashboard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_hand"
+                        android:background="@drawable/circle_background_green"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Volunteer"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:paddingTop="8dp"/>
+                </LinearLayout>
+
+                <!-- Events -->
+                <LinearLayout
+                    android:id="@+id/buttonEventsDashboard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_calendar"
+                        android:background="@drawable/circle_background_blue"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Events"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:paddingTop="8dp"/>
+                </LinearLayout>
+
+                <!-- User -->
+                <LinearLayout
+                    android:id="@+id/buttonUserDashboard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_user"
+                        android:background="@drawable/circle_background_orange"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="User"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:paddingTop="8dp"/>
+                </LinearLayout>
+
+                <!-- Testimonials -->
+                <LinearLayout
+                    android:id="@+id/buttonTestimonialsDashboard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_baby_carriage"
+                        android:background="@drawable/circle_background_purple"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Testimonials"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:paddingTop="8dp"/>
+                </LinearLayout>
+
+                <!-- About Us -->
+                <LinearLayout
+                    android:id="@+id/buttonAboutDashboard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_info"
+                        android:background="@drawable/circle_background_teal"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="About Us"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:paddingTop="8dp"/>
+                </LinearLayout>
+            </GridLayout>
+
         </LinearLayout>
     </ScrollView>
-
-    <!-- Icon Grid -->
-    <GridLayout
-        android:id="@+id/iconGrid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="3"
-        android:alignmentMode="alignMargins"
-        android:useDefaultMargins="true"
-        android:padding="16dp"
-        android:background="@color/white">
-
-        <!-- Donate -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/buttonDonateDashboard"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:padding="16dp"
-                android:src="@drawable/ic_credit_card"
-                android:background="@drawable/circle_background_red"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Donate"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:paddingTop="8dp"/>
-        </LinearLayout>
-
-        <!-- Volunteer -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:padding="16dp"
-                android:src="@drawable/ic_hand"
-                android:background="@drawable/circle_background_green"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Volunteer"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:paddingTop="8dp"/>
-        </LinearLayout>
-
-        <!-- Events -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:padding="16dp"
-                android:src="@drawable/ic_calendar"
-                android:background="@drawable/circle_background_blue"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Events"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:paddingTop="8dp"/>
-        </LinearLayout>
-
-        <!-- User -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:padding="16dp"
-                android:src="@drawable/ic_user"
-                android:background="@drawable/circle_background_orange"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="User"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:paddingTop="8dp"/>
-        </LinearLayout>
-
-        <!-- Testimonials -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:padding="16dp"
-                android:src="@drawable/ic_baby_carriage"
-                android:background="@drawable/circle_background_purple"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Testimonials"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:paddingTop="8dp"/>
-        </LinearLayout>
-
-        <!-- About Us -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:padding="16dp"
-                android:src="@drawable/ic_info"
-                android:background="@drawable/circle_background_teal"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="About Us"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:paddingTop="8dp"/>
-        </LinearLayout>
-    </GridLayout>
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

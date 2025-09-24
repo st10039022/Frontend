@@ -32,7 +32,7 @@ class AdminLoginFragment : Fragment() {
 
             if (enteredPassword == adminPassword) {
                 // Navigate to DashboardActivity
-                val intent = Intent(requireContext(), DashboardActivity::class.java)
+                val intent = Intent(requireContext(), DashboardFragment::class.java)
                 startActivity(intent)
 
                 requireActivity().finish()

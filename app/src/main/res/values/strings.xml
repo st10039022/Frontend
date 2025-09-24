@@ -7,4 +7,6 @@
     <string name="volunteer_why">Why do you want to volunteer?</string>
     <string name="volunteer_experience">Experience</string>
     <string name="submit_application">Submit Application</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
