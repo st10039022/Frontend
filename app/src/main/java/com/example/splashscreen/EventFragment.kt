@@ -4,16 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CalendarView
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class EventsFragment : Fragment() {
     private lateinit var recycler: RecyclerView
@@ -24,10 +21,20 @@ class EventsFragment : Fragment() {
     private lateinit var adapter: EventsListAdapter
     private var upcomingAdapter: EventsListAdapter? = null
     private var upcomingHeader: TextView? = null
+
+    private lateinit var btnAddEvent: Button
+    private lateinit var layoutAddForm: LinearLayout
+    private lateinit var etName: EditText
+    private lateinit var etDesc: EditText
+    private lateinit var etStart: EditText
+    private lateinit var etEnd: EditText
+    private lateinit var btnSubmit: Button
+
     private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_event, container, false)
@@ -36,6 +43,16 @@ class EventsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Admin UI elements
+        btnAddEvent = view.findViewById(R.id.btn_add_event)
+        layoutAddForm = view.findViewById(R.id.layout_add_event_form)
+        etName = view.findViewById(R.id.et_event_name)
+        etDesc = view.findViewById(R.id.et_event_desc)
+        etStart = view.findViewById(R.id.et_event_start_time)
+        etEnd = view.findViewById(R.id.et_event_end_time)
+        btnSubmit = view.findViewById(R.id.btn_submit_event)
+
+        // Recycler and views
         calendarView = view.findViewById(R.id.calendar_view)
         selectedDateText = view.findViewById(R.id.tv_selected_date)
         noEventsDayText = view.findViewById(R.id.tv_no_events_day)
@@ -50,6 +67,67 @@ class EventsFragment : Fragment() {
             upcomingRecycler!!.layoutManager = LinearLayoutManager(requireContext())
             upcomingAdapter = EventsListAdapter(emptyList())
             upcomingRecycler!!.adapter = upcomingAdapter
+        }
+
+        // Check if admin
+        val isAdmin = arguments?.getBoolean("isAdminMode", false) ?: false
+        if (isAdmin) {
+            btnAddEvent.visibility = View.VISIBLE
+        } else {
+            btnAddEvent.visibility = View.GONE
+            layoutAddForm.visibility = View.GONE
+        }
+
+        btnAddEvent.setOnClickListener {
+            // toggle showing the form
+            layoutAddForm.visibility =
+                if (layoutAddForm.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
+
+        btnSubmit.setOnClickListener {
+            val name = etName.text.toString().trim()
+            val desc = etDesc.text.toString().trim()
+            val start = etStart.text.toString().trim()
+            val end = etEnd.text.toString().trim()
+            val dateMillis = getStartOfDayMillisFromCalendar()  // use selected date
+
+            if (name.isEmpty() || desc.isEmpty() || start.isEmpty() || end.isEmpty()) {
+                Toast.makeText(requireContext(), "Fill all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Create event object
+            val newEvent = Event(
+                id = "",
+                name = name,
+                description = desc,
+                dateMillis = dateMillis,
+                startTime = start,
+                endTime = end
+            )
+
+            // Save to Firestore
+            db.collection("events")
+                .add(newEvent)  // add generates random document ID :contentReference[oaicite:0]{index=0}
+                .addOnSuccessListener { docRef ->
+                    // Optionally, update the document id field inside the doc
+                    docRef.update("id", docRef.id)
+                    Toast.makeText(requireContext(), "Event added", Toast.LENGTH_SHORT).show()
+
+                    // Clear form
+                    etName.text.clear()
+                    etDesc.text.clear()
+                    etStart.text.clear()
+                    etEnd.text.clear()
+                    layoutAddForm.visibility = View.GONE
+
+                    // Reload data
+                    loadDay(dateMillis)
+                    loadUpcoming(dateMillis)
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(requireContext(), "Failed: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                }
         }
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
@@ -69,6 +147,15 @@ class EventsFragment : Fragment() {
         updateSelectedDateText(initCal.timeInMillis)
         loadDay(initCal.timeInMillis)
         loadUpcoming(initCal.timeInMillis)
+    }
+
+    private fun getStartOfDayMillisFromCalendar(): Long {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
     }
 
     private fun getStartOfDayMillis(year: Int, monthZeroBased: Int, day: Int): Long {
@@ -129,6 +216,7 @@ class EventsFragment : Fragment() {
     }
 }
 
+// Adapter stays same
 private class EventsListAdapter(
     private var items: List<Event>
 ) : RecyclerView.Adapter<EventsListAdapter.EventViewHolder>() {
@@ -149,7 +237,7 @@ private class EventsListAdapter(
         holder.title.text = "${e.name} (${e.startTime} - ${e.endTime})"
         holder.subtitle.text = "$dateStr • ${e.description}"
 
-        // Cycle background colors like colleague’s design
+        // Background color cycle
         val colors = listOf(
             0xFF64B5F6.toInt(), // Blue
             0xFFF06292.toInt(), // Pink

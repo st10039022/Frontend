@@ -33,6 +33,8 @@
 
         <activity android:name=".MainActivity" android:exported="true" />
 
+        <!-- Register FAQ Activity -->
+        <activity android:name=".FaqActivity" android:exported="true" />
+
     </application>
 </manifest>
-

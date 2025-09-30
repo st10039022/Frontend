@@ -6,6 +6,58 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Add Event button (visible only to admin) -->
+    <Button
+        android:id="@+id/btn_add_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Event"
+        android:visibility="gone"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Form inputs for adding an event (also only for admin) -->
+    <LinearLayout
+        android:id="@+id/layout_add_event_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="8dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="16dp">
+
+        <EditText
+            android:id="@+id/et_event_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event name" />
+
+        <EditText
+            android:id="@+id/et_event_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description" />
+
+        <EditText
+            android:id="@+id/et_event_start_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Start time (HH:mm)" />
+
+        <EditText
+            android:id="@+id/et_event_end_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="End time (HH:mm)" />
+
+        <Button
+            android:id="@+id/btn_submit_event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit Event"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
     <!-- Calendar -->
     <CalendarView
         android:id="@+id/calendar_view"
@@ -13,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp" />
 
-    <!-- Selected Date -->
+    <!-- Selected Date Text -->
     <TextView
         android:id="@+id/tv_selected_date"
         android:layout_width="wrap_content"
@@ -33,7 +85,7 @@
         android:textSize="14sp"
         android:layout_marginBottom="8dp" />
 
-    <!-- Events for selected day -->
+    <!-- RecyclerView for events on selected day -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_events"
         android:layout_width="match_parent"
