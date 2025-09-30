@@ -30,10 +30,10 @@ class AdminLoginFragment : Fragment() {
             val enteredPassword = passwordEditText.text.toString()
 
             if (enteredPassword == adminPassword) {
-                // ✅ Mark session as admin
+                // mark session as admin
                 SessionManager.isAdmin = true
 
-                // ✅ Replace with DashboardFragment in admin mode
+                // replace with DashboardFragment (dashboard will read SessionManager)
                 val frag = DashboardFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, frag)

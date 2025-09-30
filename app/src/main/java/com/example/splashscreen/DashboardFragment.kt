@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 
 class DashboardFragment : Fragment() {
@@ -25,11 +26,13 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        isAdminMode = arguments?.getBoolean("isAdminMode", false) ?: false
+        // Use argument if present, otherwise fall back to SessionManager flag
+        isAdminMode = arguments?.getBoolean("isAdminMode") ?: SessionManager.isAdmin
 
         val welcomeText = view.findViewById<TextView>(R.id.textWelcomeAdmin)
         val adminLoginText = view.findViewById<TextView>(R.id.textAdminLogin)
 
+        // show/hide welcome and set admin link text
         if (isAdminMode) {
             welcomeText.visibility = View.VISIBLE
             adminLoginText.text = "Logout Admin"
@@ -38,7 +41,7 @@ class DashboardFragment : Fragment() {
             adminLoginText.text = "Admin Login"
         }
 
-        // Donate button
+        // Donate button (grid)
         view.findViewById<LinearLayout>(R.id.buttonDonateDashboard).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, DonateFragment())
@@ -46,6 +49,7 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
+        // Spotlight Donate button
         view.findViewById<Button>(R.id.buttonDonateSpotlight).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, DonateFragment())
@@ -53,14 +57,21 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
-        // Volunteer button
+        // Volunteer -> admin sees admin volunteer screen, regular user sees application
         view.findViewById<LinearLayout>(R.id.buttonVolunteerDashboard).setOnClickListener {
+            val frag = if (isAdminMode) {
+                // use the admin volunteer fragment you provided earlier
+                AdminVolunteerApplicationsFragment()
+            } else {
+                VolunteerApplicationFragment()
+            }
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, VolunteerApplicationFragment())
+                .replace(R.id.fragment_container, frag)
                 .addToBackStack(null)
                 .commit()
         }
 
+        // Spotlight Volunteer button (keeps original behavior)
         view.findViewById<Button>(R.id.buttonVolunteerSpotlight).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, VolunteerApplicationFragment())
@@ -68,7 +79,7 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
-        // Events button
+        // Events -> pass isAdminMode so EventsFragment can show add-event controls
         view.findViewById<LinearLayout>(R.id.buttonEventsDashboard).setOnClickListener {
             val frag = EventsFragment().apply {
                 arguments = Bundle().apply { putBoolean("isAdminMode", isAdminMode) }
@@ -79,6 +90,7 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
+        // Spotlight Events button
         view.findViewById<Button>(R.id.buttonEventsSpotlight).setOnClickListener {
             val frag = EventsFragment().apply {
                 arguments = Bundle().apply { putBoolean("isAdminMode", isAdminMode) }
@@ -89,7 +101,7 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
-        // Testimonials button
+        // Testimonials
         view.findViewById<LinearLayout>(R.id.buttonTestimonialsDashboard).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, TestimonialsFragment())
@@ -97,7 +109,7 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
-        // About Us button
+        // About Us
         view.findViewById<LinearLayout>(R.id.buttonAboutDashboard).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, AboutUsFragment())
@@ -105,21 +117,23 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
-        // FAQ button (replaces previous User button)
+        // FAQ (was the user button) -> opens FaqActivity
         view.findViewById<LinearLayout>(R.id.buttonUserDashboard).setOnClickListener {
             startActivity(Intent(requireContext(), FaqActivity::class.java))
         }
 
-        // Admin login/logout
+        // Admin login/logout link
         adminLoginText.setOnClickListener {
             if (isAdminMode) {
-                val frag = DashboardFragment().apply {
-                    arguments = Bundle().apply { putBoolean("isAdminMode", false) }
-                }
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, frag)
-                    .commit()
+                // logout: clear session and update UI
+                SessionManager.isAdmin = false
+                isAdminMode = false
+                // update UI in place
+                welcomeText.visibility = View.GONE
+                adminLoginText.text = "Admin Login"
+                Toast.makeText(requireContext(), "Logged out of admin", Toast.LENGTH_SHORT).show()
             } else {
+                // go to admin login
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, AdminLoginFragment())
                     .addToBackStack(null)
