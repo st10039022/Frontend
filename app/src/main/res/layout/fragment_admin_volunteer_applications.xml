@@ -1,12 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
+    <!-- Header button -->
+    <Button
+        android:id="@+id/button_view_approved"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Approved/Rejected Volunteers"
+        android:layout_margin="8dp"
+        android:backgroundTint="#2E4E5E"
+        android:textColor="#FFF"
+        android:textStyle="bold"/>
+
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_pending_applications"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:padding="8dp"/>
 
-</FrameLayout> 
+    <!-- Empty State Text -->
+    <TextView
+        android:id="@+id/tv_empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No pending volunteer applications."
+        android:textColor="#888"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:padding="20dp"
+        android:visibility="gone"/>
+</LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.splashscreen
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,7 @@ class EventsFragment : Fragment() {
     private lateinit var layoutAddForm: LinearLayout
     private lateinit var etName: EditText
     private lateinit var etDesc: EditText
+    private lateinit var etDate: EditText
     private lateinit var etStart: EditText
     private lateinit var etEnd: EditText
     private lateinit var btnSubmit: Button
@@ -48,6 +50,7 @@ class EventsFragment : Fragment() {
         layoutAddForm = view.findViewById(R.id.layout_add_event_form)
         etName = view.findViewById(R.id.et_event_name)
         etDesc = view.findViewById(R.id.et_event_desc)
+        etDate = view.findViewById(R.id.et_event_date)
         etStart = view.findViewById(R.id.et_event_start_time)
         etEnd = view.findViewById(R.id.et_event_end_time)
         btnSubmit = view.findViewById(R.id.btn_submit_event)
@@ -78,23 +81,40 @@ class EventsFragment : Fragment() {
             layoutAddForm.visibility = View.GONE
         }
 
+        // Toggle form visibility
         btnAddEvent.setOnClickListener {
-            // toggle showing the form
             layoutAddForm.visibility =
                 if (layoutAddForm.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
 
+        // ---- DATE PICKER SETUP ----
+        etDate.setOnClickListener {
+            val cal = Calendar.getInstance()
+            val datePicker = DatePickerDialog(requireContext(),
+                { _, year, month, dayOfMonth ->
+                    etDate.setText(String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year))
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            )
+            datePicker.show()
+        }
+
+        // Submit new event
         btnSubmit.setOnClickListener {
             val name = etName.text.toString().trim()
             val desc = etDesc.text.toString().trim()
+            val dateStr = etDate.text.toString().trim()
             val start = etStart.text.toString().trim()
             val end = etEnd.text.toString().trim()
-            val dateMillis = getStartOfDayMillisFromCalendar()  // use selected date
 
-            if (name.isEmpty() || desc.isEmpty() || start.isEmpty() || end.isEmpty()) {
+            if (name.isEmpty() || desc.isEmpty() || dateStr.isEmpty() || start.isEmpty() || end.isEmpty()) {
                 Toast.makeText(requireContext(), "Fill all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            val dateMillis = parseDateToMillis(dateStr)
 
             // Create event object
             val newEvent = Event(
@@ -108,15 +128,15 @@ class EventsFragment : Fragment() {
 
             // Save to Firestore
             db.collection("events")
-                .add(newEvent)  // add generates random document ID :contentReference[oaicite:0]{index=0}
+                .add(newEvent)
                 .addOnSuccessListener { docRef ->
-                    // Optionally, update the document id field inside the doc
                     docRef.update("id", docRef.id)
                     Toast.makeText(requireContext(), "Event added", Toast.LENGTH_SHORT).show()
 
                     // Clear form
                     etName.text.clear()
                     etDesc.text.clear()
+                    etDate.text.clear()
                     etStart.text.clear()
                     etEnd.text.clear()
                     layoutAddForm.visibility = View.GONE
@@ -147,6 +167,12 @@ class EventsFragment : Fragment() {
         updateSelectedDateText(initCal.timeInMillis)
         loadDay(initCal.timeInMillis)
         loadUpcoming(initCal.timeInMillis)
+    }
+
+    private fun parseDateToMillis(dateStr: String): Long {
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val date = sdf.parse(dateStr)
+        return date?.time ?: getStartOfDayMillisFromCalendar()
     }
 
     private fun getStartOfDayMillisFromCalendar(): Long {
@@ -237,11 +263,10 @@ private class EventsListAdapter(
         holder.title.text = "${e.name} (${e.startTime} - ${e.endTime})"
         holder.subtitle.text = "$dateStr • ${e.description}"
 
-        // Background color cycle
         val colors = listOf(
-            0xFF64B5F6.toInt(), // Blue
-            0xFFF06292.toInt(), // Pink
-            0xFFBA68C8.toInt()  // Purple
+            0xFF64B5F6.toInt(),
+            0xFFF06292.toInt(),
+            0xFFBA68C8.toInt()
         )
         holder.itemView.setBackgroundColor(colors[position % colors.size])
     }

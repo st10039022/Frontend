@@ -1,19 +1,20 @@
 package com.example.splashscreen
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.example.splashscreen.VolunteerApplication
 
 class AdminVolunteerApplicationsFragment : Fragment() {
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: VolunteerApplicationAdapter
     private val db = FirebaseFirestore.getInstance()
@@ -28,14 +29,28 @@ class AdminVolunteerApplicationsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val buttonViewApproved = view.findViewById<Button>(R.id.button_view_approved)
+        val emptyState = view.findViewById<TextView>(R.id.tv_empty_state)
         recyclerView = view.findViewById(R.id.rv_pending_applications)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
         adapter = VolunteerApplicationAdapter(listOf(), this::approveApplication, this::rejectApplication)
         recyclerView.adapter = adapter
-        listenForPendingApplications()
+
+        // Button to go to approved/rejected volunteers
+        buttonViewApproved.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ApprovedVolunteersFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        // Listen for pending applications
+        listenForPendingApplications(emptyState)
     }
 
-    private fun listenForPendingApplications() {
+    private fun listenForPendingApplications(emptyState: TextView) {
         listener = db.collection("volunteer_applications")
             .whereEqualTo("status", "pending")
             .addSnapshotListener { snapshots, error ->
@@ -43,11 +58,22 @@ class AdminVolunteerApplicationsFragment : Fragment() {
                     Toast.makeText(requireContext(), "Error loading applications", Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
                 }
+
                 val apps = snapshots?.documents?.mapNotNull { doc ->
                     val app = doc.toObject(VolunteerApplication::class.java)
                     app?.copy(id = doc.id)
                 } ?: listOf()
+
                 adapter.updateData(apps)
+
+                // Show/hide empty state
+                if (apps.isEmpty()) {
+                    emptyState.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                } else {
+                    emptyState.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                }
             }
     }
 
