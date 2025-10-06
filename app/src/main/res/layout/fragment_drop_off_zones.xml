@@ -12,7 +12,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!--  Header  -->
+        <!-- Header -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,9 +21,9 @@
             android:textSize="18sp"
             android:textColor="@color/black"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
-        <!--  Map Image Container  -->
+        <!-- Map Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="250dp"
@@ -35,14 +35,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <!--  Static Map Image  -->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/map"
-                    android:scaleType="centerCrop"/>
+                    android:scaleType="centerCrop" />
 
-                <!--  Map Overlay Button  -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -64,7 +62,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/ic_navigation"
-                            app:tint="@color/light_blue"/>
+                            app:tint="@color/light_blue" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -73,13 +71,13 @@
                             android:textSize="12sp"
                             android:textColor="@color/light_blue"
                             android:textStyle="bold"
-                            android:layout_marginStart="4dp"/>
+                            android:layout_marginStart="4dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </FrameLayout>
         </androidx.cardview.widget.CardView>
 
-        <!--  Address Info  -->
+        <!-- Address and Hours -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -87,7 +85,7 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="4dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -95,9 +93,8 @@
             android:text="03 West Riding Road, Hillcrest, KZN"
             android:textSize="14sp"
             android:textColor="@color/grey"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
-        <!--  Hours Info  -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -105,50 +102,27 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="4dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monday To Friday, 8:00 AM – 4:00 PM"
+            android:text="Monday to Friday, 8:00 AM – 4:00 PM"
             android:textSize="14sp"
             android:textColor="@color/grey"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="We Kindly Ask That All Donations Be Made During Working Hours."
+            android:text="We kindly ask that all donations be made during working hours."
             android:textSize="12sp"
             android:textColor="@color/grey"
             android:textStyle="italic"
             android:gravity="center"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="24dp" />
 
-        <!--  Wish List Title  -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Wish List"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:gravity="center"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Below is a list of items we currently need most"
-            android:textSize="14sp"
-            android:textColor="@color/grey"
-            android:gravity="center"
-            android:layout_marginBottom="16dp"/>
-
-        <!--  Wish List Table  -->
-        <!-- (keeping exactly your structure, omitted here for brevity) -->
-
-        <!--  Action Buttons  -->
+        <!-- Action Buttons -->
         <Button
             android:id="@+id/buttonGetDirections"
             android:layout_width="match_parent"
@@ -161,7 +135,7 @@
             android:drawablePadding="8dp"
             android:padding="16dp"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/buttonCallUs"
@@ -174,6 +148,68 @@
             android:drawablePadding="8dp"
             android:padding="16dp"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Wishlist Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wish List"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Below is a list of items we currently need most"
+            android:textSize="14sp"
+            android:textColor="@color/grey"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Admin Controls (visible only to admins) -->
+        <LinearLayout
+            android:id="@+id/adminControls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp">
+
+            <EditText
+                android:id="@+id/inputProductName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter product name"
+                android:padding="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/edittext_outline" />
+
+            <Spinner
+                android:id="@+id/spinnerPriority"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/priorities"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnAddProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Product"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/light_blue" />
+        </LinearLayout>
+
+        <!-- Wishlist Recycler -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerWishlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
     </LinearLayout>
 </ScrollView>

@@ -104,3 +104,7 @@ class AdminVolunteerApplicationsFragment : Fragment() {
         listener?.remove()
     }
 }
+
+
+
+//Hi so what I need to do now, is replace the donate payment fragment with the new one my friend did with the correct navigation. Then I need to add the admin wishlist in the drop of zones. So admins when they log in they must be able to add stuff to the wishlist and then it must display, then users must be able to see this stuff on the wishlits. Then I want to make the admin dashboard look neater, so when admins log in everything says managed before their name like manage volunteer. It looks weird right now, i need it to look nice like more central ok? And lastly I updated the version to Narwhal from lady bug so that may give issues. U must help me with that if there are any probs. Ok lets do this step by step. Tell me what classes u need This is from what I was doing the other day in my new life baby home app for an NPO u must remember. I now need help implementing this step by step
