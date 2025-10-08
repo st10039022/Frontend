@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:fillViewport="true"
+    android:clipToPadding="false"
+    android:paddingBottom="120dp"
     android:scrollbars="vertical">
 
     <LinearLayout
@@ -13,7 +16,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header -->
+        <!-- header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,7 +48,7 @@
                 android:layout_height="24dp" />
         </LinearLayout>
 
-        <!-- Payment Instructions -->
+        <!-- zapper instructions -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,14 +81,14 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Payment Method Card -->
+        <!-- method buttons -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="#E3F2FD">
+            app:cardBackgroundColor="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -129,7 +132,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- QR Code -->
+        <!-- QR card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -186,42 +189,77 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Custom Amount -->
+        <!-- thank you -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Or enter custom amount"
-            android:textSize="14sp"
-            android:textColor="@color/grey"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Buttons -->
-        <Button
-            android:id="@+id/buttonGenerateQR"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Generate Payment QR"
-            android:textColor="@android:color/white"
-            android:backgroundTint="@color/light_blue"
-            android:textSize="16sp"
+            android:text="Thank you for your kindness. Every contribution helps us care for the little ones"
+            android:textSize="20sp"
+            android:textColor="@color/black"
             android:textStyle="bold"
+            android:gravity="center"
             android:layout_marginBottom="16dp" />
 
-        <Button
-            android:id="@+id/buttonOtherPayment"
+        <!-- bottle card white background -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Other Payment Methods"
-            android:textColor="@color/light_blue"
-            android:background="@drawable/button_outline"
-            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@color/white"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp">
+
+                <ImageView
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:src="@drawable/ic_baby_bottle_outline"
+                    android:contentDescription="Baby bottle"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter" />
+
+                <!-- removed the old divider line -->
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- totals -->
+        <TextView
+            android:id="@+id/textRaised"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Raised R 0.00"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/textGoal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Goal R 10,000.00"
+            android:textSize="16sp"
+            android:textColor="@color/grey"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
 
         <Button
             android:id="@+id/button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Done" />
+            android:layout_height="56dp"
+            android:text="Done"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/light_blue"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
     </LinearLayout>
 </ScrollView>

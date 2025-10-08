@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 class ManageWishlistFragment : Fragment() {
 
@@ -54,7 +55,16 @@ class ManageWishlistFragment : Fragment() {
 
     private fun loadWishlist() {
         docRef.addSnapshotListener { snapshot, e ->
-            if (e != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+            if (e != null) {
+                Toast.makeText(requireContext(), "Error loading wishlist: ${e.message}", Toast.LENGTH_LONG).show()
+                return@addSnapshotListener
+            }
+
+            if (snapshot == null || !snapshot.exists()) {
+                itemsList.clear()
+                adapter.notifyDataSetChanged()
+                return@addSnapshotListener
+            }
 
             itemsList.clear()
             val items = snapshot.get("items") as? List<Map<String, Any>>
@@ -70,12 +80,10 @@ class ManageWishlistFragment : Fragment() {
     private fun addItem() {
         val name = inputProduct.text.toString().trim()
         val priority = spinnerPriority.selectedItem.toString().lowercase()
-
         if (name.isEmpty()) {
             Toast.makeText(requireContext(), "Enter a product name", Toast.LENGTH_SHORT).show()
             return
         }
-
         itemsList.add(ProductItem(name, priority))
         saveToFirestore()
         inputProduct.text.clear()
@@ -83,14 +91,40 @@ class ManageWishlistFragment : Fragment() {
 
     private fun editItem(position: Int) {
         val item = itemsList[position]
-        val editText = EditText(requireContext())
-        editText.setText(item.productName)
 
+        // Create a layout for the dialog
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_edit_wishlist_item, null)
+
+        val editName = dialogView.findViewById<EditText>(R.id.editProductName)
+        val spinnerPriority = dialogView.findViewById<Spinner>(R.id.spinnerEditPriority)
+
+        editName.setText(item.productName)
+
+        // Set up spinner items
+        val priorities = listOf("High", "Medium", "Low")
+        val adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, priorities)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPriority.adapter = adapter
+
+        // Set spinner to current priority
+        val currentIndex = priorities.indexOfFirst { it.equals(item.priority, ignoreCase = true) }
+        if (currentIndex != -1) spinnerPriority.setSelection(currentIndex)
+
+        // Build dialog
         val dialog = android.app.AlertDialog.Builder(requireContext())
             .setTitle("Edit Product")
-            .setView(editText)
+            .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
-                itemsList[position] = ProductItem(editText.text.toString(), item.priority)
+                val newName = editName.text.toString().trim()
+                val newPriority = spinnerPriority.selectedItem.toString().lowercase()
+
+                if (newName.isEmpty()) {
+                    Toast.makeText(requireContext(), "Product name cannot be empty", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                itemsList[position] = ProductItem(newName, newPriority)
                 saveToFirestore()
             }
             .setNegativeButton("Cancel", null)
@@ -108,7 +142,14 @@ class ManageWishlistFragment : Fragment() {
         val newList = itemsList.map {
             mapOf("productName" to it.productName, "priority" to it.priority)
         }
-        docRef.update("items", newList)
+        val data = mapOf("items" to newList)
+        docRef.set(data, SetOptions.merge())
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Wishlist updated successfully", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { ex ->
+                Toast.makeText(requireContext(), "Failed to save: ${ex.message}", Toast.LENGTH_LONG).show()
+            }
     }
 }
 
@@ -136,10 +177,18 @@ class ManageWishlistAdapter(
         val item = items[position]
         holder.txtProduct.text = item.productName
         holder.txtPriority.text = when (item.priority.lowercase()) {
-            "high" -> "🔥"
-            "medium" -> "🍼"
-            "low" -> "🧸"
+            "high" -> "High Priority"
+            "medium" -> "Medium Priority"
+            "low" -> "Low Priority"
             else -> item.priority
+        }
+
+        if (!SessionManager.isAdmin) {
+            holder.btnEdit.visibility = View.GONE
+            holder.btnDelete.visibility = View.GONE
+        } else {
+            holder.btnEdit.visibility = View.VISIBLE
+            holder.btnDelete.visibility = View.VISIBLE
         }
 
         holder.btnEdit.setOnClickListener { onEdit(position) }

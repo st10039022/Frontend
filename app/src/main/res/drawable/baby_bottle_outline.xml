@@ -1,0 +1,41 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="140dp"
+    android:height="280dp"
+    android:viewportWidth="140"
+    android:viewportHeight="280">
+
+    <!-- nipple dome -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/black"
+        android:strokeWidth="4"
+        android:pathData="
+            M70,6
+            C88,6 100,14 100,22
+            L100,28
+            L40,28
+            L40,22
+            C40,14 52,6 70,6
+            Z" />
+
+    <!-- screw ring -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/black"
+        android:strokeWidth="4"
+        android:pathData="M36,28 L104,28 L104,46 L36,46 Z" />
+
+    <!-- neck -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/black"
+        android:strokeWidth="4"
+        android:pathData="M46,46 L94,46 L94,66 L46,66 Z" />
+
+    <!-- bottle body -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/black"
+        android:strokeWidth="4"
+        android:pathData="M22,66 L118,66 L118,238 L22,238 Z" />
+</vector>

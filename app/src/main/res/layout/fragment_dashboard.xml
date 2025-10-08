@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Scrollable content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -19,13 +18,14 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <!-- Search Bar -->
+            <!-- Search Bar white -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -41,6 +41,7 @@
                         app:tint="@color/black"/>
 
                     <EditText
+                        android:id="@+id/editSearch"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:minHeight="48dp"
@@ -68,11 +69,11 @@
                 android:visibility="gone"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Latest Articles -->
+            <!-- Did You Know? (Article) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Latest Articles"
+                android:text="Did You Know?"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/light_blue"
@@ -92,7 +93,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="195dp"
-                        android:contentDescription="null"
+                        android:contentDescription="@null"
                         android:scaleType="centerCrop"
                         android:src="@drawable/babyarticle" />
 
@@ -107,24 +108,25 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
-                            android:text="How to Help Your Community"
+                            android:text="10,000 Babies are abandoned in South Africa every year"
                             android:textColor="#0E3E3E"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
-                            android:text="Learn the best ways to contribute to your local area through events, donations, and volunteer work."
+                            android:text="Our vision is to take these infants from bins to beds, giving these little lives a second chance - no life left behind!"
                             android:textColor="#1D4747"
-                            android:textSize="14sp" />
+                            android:textSize="15sp" />
 
                         <Button
+                            android:id="@+id/buttonReadMoreNLBH"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:backgroundTint="@color/light_blue"
-                            android:text="Read Article"
+                            android:text="Read More About NLBH"
                             android:textColor="@color/white" />
                     </LinearLayout>
                 </FrameLayout>
@@ -151,7 +153,7 @@
                     android:layout_height="150dp"
                     android:orientation="horizontal">
 
-                    <!-- Spotlight Card 1: Donate -->
+                    <!-- Donate spotlight card -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="220dp"
                         android:layout_height="match_parent"
@@ -167,8 +169,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/donatearm"
-                                android:contentDescription="@null"/>
+                                android:src="@drawable/donatearm"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -197,7 +198,7 @@
                         </FrameLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Spotlight Card 2: Events -->
+                    <!-- Events spotlight card -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="220dp"
                         android:layout_height="match_parent"
@@ -213,8 +214,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/eventarm"
-                                android:contentDescription="@null"/>
+                                android:src="@drawable/eventarm"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -253,7 +253,7 @@
                         </FrameLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Spotlight Card 3: Volunteer -->
+                    <!-- Volunteer spotlight card -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="220dp"
                         android:layout_height="match_parent"
@@ -269,8 +269,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/volunteerarm"
-                                android:contentDescription="@null"/>
+                                android:src="@drawable/volunteerarm"/>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -320,7 +319,6 @@
                     android:layout_columnWeight="1"
                     android:orientation="vertical"
                     android:gravity="center">
-
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
@@ -328,7 +326,6 @@
                         android:src="@drawable/ic_credit_card"
                         android:background="@drawable/circle_background_red"
                         android:scaleType="centerInside"/>
-
                     <TextView
                         android:id="@+id/textDonateLabel"
                         android:layout_width="wrap_content"
@@ -347,7 +344,6 @@
                     android:layout_columnWeight="1"
                     android:orientation="vertical"
                     android:gravity="center">
-
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
@@ -355,7 +351,6 @@
                         android:src="@drawable/ic_hand"
                         android:background="@drawable/circle_background_green"
                         android:scaleType="centerInside"/>
-
                     <TextView
                         android:id="@+id/textVolunteerLabel"
                         android:layout_width="wrap_content"
@@ -374,7 +369,6 @@
                     android:layout_columnWeight="1"
                     android:orientation="vertical"
                     android:gravity="center">
-
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
@@ -382,7 +376,6 @@
                         android:src="@drawable/ic_calendar"
                         android:background="@drawable/circle_background_blue"
                         android:scaleType="centerInside"/>
-
                     <TextView
                         android:id="@+id/textEventsLabel"
                         android:layout_width="wrap_content"
@@ -401,7 +394,6 @@
                     android:layout_columnWeight="1"
                     android:orientation="vertical"
                     android:gravity="center">
-
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
@@ -409,7 +401,6 @@
                         android:src="@drawable/ic_faq"
                         android:background="@drawable/circle_background_orange"
                         android:scaleType="centerInside"/>
-
                     <TextView
                         android:id="@+id/textFaqLabel"
                         android:layout_width="wrap_content"
@@ -428,7 +419,6 @@
                     android:layout_columnWeight="1"
                     android:orientation="vertical"
                     android:gravity="center">
-
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
@@ -436,7 +426,6 @@
                         android:src="@drawable/ic_baby_carriage"
                         android:background="@drawable/circle_background_purple"
                         android:scaleType="centerInside"/>
-
                     <TextView
                         android:id="@+id/textTestimonialsLabel"
                         android:layout_width="wrap_content"
@@ -455,7 +444,6 @@
                     android:layout_columnWeight="1"
                     android:orientation="vertical"
                     android:gravity="center">
-
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
@@ -463,7 +451,6 @@
                         android:src="@drawable/ic_info"
                         android:background="@drawable/circle_background_teal"
                         android:scaleType="centerInside"/>
-
                     <TextView
                         android:id="@+id/textAboutLabel"
                         android:layout_width="wrap_content"
@@ -475,7 +462,6 @@
                 </LinearLayout>
             </GridLayout>
 
-            <!-- Admin Login link -->
             <TextView
                 android:id="@+id/textAdminLogin"
                 android:layout_width="wrap_content"
@@ -491,13 +477,15 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation with custom blue outline ripple -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black" />
+        app:itemIconTint="@color/bnv_tint"
+        app:itemTextColor="@color/bnv_tint"
+        app:itemRippleColor="@color/bnv_ripple"
+        app:itemBackground="@drawable/bnv_item_background"/>
 </LinearLayout>

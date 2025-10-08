@@ -1,15 +1,16 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 apply(plugin = "com.google.gms.google-services") // Firebase
 
 android {
-    namespace = "com.example.splashscreen" // or your preferred namespace
+    namespace = "com.example.splashscreen"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.splashscreen" // keep the main app's ID
+        applicationId = "com.example.splashscreen"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -68,4 +69,12 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    //Testimonials imports
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.14.2")
+    kapt("com.github.bumptech.glide:compiler:4.15.1")
+
+    // PDF viewer
+    implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
 }

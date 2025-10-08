@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Family Name -->
+        <EditText
+            android:id="@+id/etFamilyName"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:background="@drawable/edit_text_bg"
+            android:hint="Family Name"
+            android:inputType="textPersonName"
+            android:padding="10dp" />
+
+        <!-- Testimonial Message -->
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Family Testimonial"
+            android:inputType="textMultiLine"
+            android:minLines="4"
+            android:gravity="top"
+            android:padding="10dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_bg" />
+
+        <!-- Pick Images -->
+        <Button
+            android:id="@+id/btnPickImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pick Images"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/light_blue"
+            android:textColor="@android:color/white" />
+
+        <!-- Image count label -->
+        <TextView
+            android:id="@+id/tvPickedCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No images chosen"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="8dp" />
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/light_blue"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/tvEftTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EFT Bank Details"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Each line is its own TextView for clean stacking -->
+        <TextView
+            android:id="@+id/tvLineName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ikusasalethu Baby Home"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvLineBank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Standard Bank"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvLineBranchName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hillcrest"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvLineAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Account: 10224032591"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvLineBranchCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Branch code: 045726"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/btnCopyAcc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Copy Acc" />
+
+            <Button
+                android:id="@+id/btnCopyBranch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Copy Branch"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -39,10 +39,17 @@ class DropOffZonesFragment : Fragment() {
         spinnerPriority = view.findViewById(R.id.spinnerPriority)
         btnAdd = view.findViewById(R.id.btnAddProduct)
 
-        recycler.layoutManager = LinearLayoutManager(requireContext())
-        adapter = ManageWishlistAdapter(itemsList,
+        recycler.layoutManager = object : LinearLayoutManager(requireContext()) {
+            override fun canScrollVertically(): Boolean = false
+        }
+
+        adapter = ManageWishlistAdapter(
+            items = itemsList,
             onEdit = { position -> editItem(position) },
-            onDelete = { position -> deleteItem(position) })
+            onDelete = { position -> deleteItem(position) }
+        ).apply {
+        }
+
         recycler.adapter = adapter
 
         // Show admin controls only if admin
@@ -54,8 +61,6 @@ class DropOffZonesFragment : Fragment() {
         }
 
         loadWishlist()
-
-        // Map + Contact setup
         setupMapAndButtons(view)
 
         return view
@@ -90,6 +95,7 @@ class DropOffZonesFragment : Fragment() {
     private fun loadWishlist() {
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+
             itemsList.clear()
             val items = snapshot.get("items") as? List<Map<String, Any>>
             items?.forEach { map ->
@@ -104,31 +110,57 @@ class DropOffZonesFragment : Fragment() {
     private fun addItem() {
         val name = inputProduct.text.toString().trim()
         val priority = spinnerPriority.selectedItem.toString().lowercase()
+
         if (name.isEmpty()) {
             Toast.makeText(requireContext(), "Enter a product name", Toast.LENGTH_SHORT).show()
             return
         }
+
         itemsList.add(ProductItem(name, priority))
         saveToFirestore()
         inputProduct.text.clear()
     }
 
     private fun editItem(position: Int) {
-        if (!SessionManager.isAdmin) return
         val item = itemsList[position]
-        val editText = EditText(requireContext())
-        editText.setText(item.productName)
+
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_edit_wishlist_item, null)
+
+        val editName = dialogView.findViewById<EditText>(R.id.editProductName)
+        val spinnerPriority = dialogView.findViewById<Spinner>(R.id.spinnerEditPriority)
+
+        editName.setText(item.productName)
+
+        val priorities = listOf("High", "Medium", "Low")
+        val adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, priorities)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPriority.adapter = adapter
+
+        val currentIndex = priorities.indexOfFirst { it.equals(item.priority, ignoreCase = true) }
+        if (currentIndex != -1) spinnerPriority.setSelection(currentIndex)
+
         val dialog = android.app.AlertDialog.Builder(requireContext())
             .setTitle("Edit Product")
-            .setView(editText)
+            .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
-                itemsList[position] = ProductItem(editText.text.toString(), item.priority)
+                val newName = editName.text.toString().trim()
+                val newPriority = spinnerPriority.selectedItem.toString().lowercase()
+
+                if (newName.isEmpty()) {
+                    Toast.makeText(requireContext(), "Product name cannot be empty", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                itemsList[position] = ProductItem(newName, newPriority)
                 saveToFirestore()
             }
             .setNegativeButton("Cancel", null)
             .create()
+
         dialog.show()
     }
+
 
     private fun deleteItem(position: Int) {
         if (!SessionManager.isAdmin) return
@@ -140,6 +172,16 @@ class DropOffZonesFragment : Fragment() {
         val newList = itemsList.map {
             mapOf("productName" to it.productName, "priority" to it.priority)
         }
-        docRef.update("items", newList)
+
+        val data = mapOf("items" to newList)
+
+        // Use set() with merge instead of update() for reliability
+        docRef.set(data, com.google.firebase.firestore.SetOptions.merge())
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Wishlist updated", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { ex ->
+                Toast.makeText(requireContext(), "Failed to save: ${ex.message}", Toast.LENGTH_LONG).show()
+            }
     }
 }

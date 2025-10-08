@@ -1,0 +1,82 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="140dp"
+    android:height="280dp"
+    android:viewportWidth="140"
+    android:viewportHeight="280">
+
+    <!-- bottle plastic tint -->
+    <path
+        android:fillColor="#CFEFFF"
+        android:pathData="
+            M36,84
+            L104,84
+            L104,218
+            Q104,236 88,236
+            L52,236
+            Q36,236 36,218
+            Z" />
+
+    <!-- milk inside -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="
+            M38,218
+            C46,214 58,226 70,222
+            C82,218 94,226 102,220
+            L102,236
+            Q102,236 88,236
+            L52,236
+            Q38,236 38,236
+            Z" />
+
+    <!-- dummy bulb taller and slimmer -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#000000"
+        android:strokeWidth="6"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="
+            M56,14
+            C56,8 62,6 70,6
+            C78,6 84,8 84,14
+            L84,24
+            L56,24
+            Z" />
+
+    <!-- cap ring slimmer no overhang -->
+    <path
+        android:fillColor="#CFEFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="6"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="
+            M30,28 L110,28 L110,40 L30,40 Z" />
+
+    <!-- neck -->
+    <path
+        android:fillColor="#CFEFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="6"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="
+            M44,40 L96,40 L96,60 L44,60 Z" />
+
+    <!-- bottle body with rounded bottom -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#000000"
+        android:strokeWidth="6"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="
+            M28,60
+            L112,60
+            L112,218
+            Q112,244 88,244
+            L52,244
+            Q28,244 28,218
+            Z" />
+</vector>

@@ -2,15 +2,22 @@ package com.example.splashscreen
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,7 +31,6 @@ class DashboardFragment : Fragment() {
     private var spotlightEventButton: Button? = null
     private var spotlightEvent: Event? = null
 
-    // Button labels
     private lateinit var textDonateLabel: TextView
     private lateinit var textVolunteerLabel: TextView
     private lateinit var textEventsLabel: TextView
@@ -36,9 +42,7 @@ class DashboardFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_dashboard, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,12 +52,10 @@ class DashboardFragment : Fragment() {
         val welcomeText = view.findViewById<TextView>(R.id.textWelcomeAdmin)
         val adminLoginText = view.findViewById<TextView>(R.id.textAdminLogin)
 
-        // Spotlight event views
         spotlightEventTitle = view.findViewById(R.id.tvSpotlightEventTitle)
         spotlightEventSubtitle = view.findViewById(R.id.tvSpotlightEventSubtitle)
         spotlightEventButton = view.findViewById(R.id.buttonEventsSpotlight)
 
-        // Grid button labels
         textDonateLabel = view.findViewById(R.id.textDonateLabel)
         textVolunteerLabel = view.findViewById(R.id.textVolunteerLabel)
         textEventsLabel = view.findViewById(R.id.textEventsLabel)
@@ -61,15 +63,12 @@ class DashboardFragment : Fragment() {
         textAboutLabel = view.findViewById(R.id.textAboutLabel)
         textFaqLabel = view.findViewById(R.id.textFaqLabel)
 
-        // Load spotlight event
         loadSpotlightEvent()
 
-        // show/hide welcome and set admin link text
         if (isAdminMode) {
             welcomeText.visibility = View.VISIBLE
             adminLoginText.text = "Logout Admin"
 
-            // Change all button labels for admin
             textDonateLabel.text = "Manage Donations"
             textVolunteerLabel.text = "Manage Volunteers"
             textEventsLabel.text = "Manage Events"
@@ -80,7 +79,6 @@ class DashboardFragment : Fragment() {
             welcomeText.visibility = View.GONE
             adminLoginText.text = "Admin Login"
 
-            // Reset user labels
             textDonateLabel.text = "Donate"
             textVolunteerLabel.text = "Volunteer"
             textEventsLabel.text = "Events"
@@ -89,15 +87,13 @@ class DashboardFragment : Fragment() {
             textFaqLabel.text = "FAQ"
         }
 
-        // Donate button
+        // donate
         view.findViewById<LinearLayout>(R.id.buttonDonateDashboard).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, DonateFragment())
                 .addToBackStack(null)
                 .commit()
         }
-
-        // Spotlight Donate button
         view.findViewById<Button>(R.id.buttonDonateSpotlight).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, DonateFragment())
@@ -105,7 +101,7 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
-        // Volunteer button
+        // volunteer
         view.findViewById<LinearLayout>(R.id.buttonVolunteerDashboard).setOnClickListener {
             val frag = if (isAdminMode) {
                 AdminVolunteerApplicationsFragment()
@@ -117,8 +113,6 @@ class DashboardFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
-
-        // Spotlight Volunteer
         view.findViewById<Button>(R.id.buttonVolunteerSpotlight).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, VolunteerApplicationFragment())
@@ -126,7 +120,7 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
-        // Events button
+        // events
         view.findViewById<LinearLayout>(R.id.buttonEventsDashboard).setOnClickListener {
             val frag = EventsFragment().apply {
                 arguments = Bundle().apply { putBoolean("isAdminMode", isAdminMode) }
@@ -136,8 +130,6 @@ class DashboardFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
-
-        // Spotlight Events button
         spotlightEventButton?.setOnClickListener {
             spotlightEvent?.let { e ->
                 val frag = EventDetailsFragment().apply {
@@ -154,20 +146,31 @@ class DashboardFragment : Fragment() {
                     .replace(R.id.fragment_container, frag)
                     .addToBackStack(null)
                     .commit()
-            } ?: run {
-                Toast.makeText(requireContext(), "No upcoming event", Toast.LENGTH_SHORT).show()
+            } ?: Toast.makeText(requireContext(), "No upcoming event", Toast.LENGTH_SHORT).show()
+        }
+
+        // testimonials
+        view.findViewById<LinearLayout>(R.id.buttonTestimonialsDashboard).setOnClickListener {
+            if (isAdminMode) {
+                val opened = openAnyFragment(
+                    "com.example.splashscreen.ManageTestimonialsFragment",
+                    "com.example.splashscreen.AdminTestimonialsFragment"
+                )
+                if (!opened) {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, TestimonialsFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
+            } else {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, TestimonialsFragment())
+                    .addToBackStack(null)
+                    .commit()
             }
         }
 
-        // Testimonials
-        view.findViewById<LinearLayout>(R.id.buttonTestimonialsDashboard).setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, TestimonialsFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-
-        // About Us
+        // about
         view.findViewById<LinearLayout>(R.id.buttonAboutDashboard).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, AboutUsFragment())
@@ -175,12 +178,12 @@ class DashboardFragment : Fragment() {
                 .commit()
         }
 
-        // FAQ
+        // faq
         view.findViewById<LinearLayout>(R.id.buttonUserDashboard).setOnClickListener {
             startActivity(Intent(requireContext(), FaqActivity::class.java))
         }
 
-        // Admin login/logout link
+        // admin link
         adminLoginText.setOnClickListener {
             if (isAdminMode) {
                 SessionManager.isAdmin = false
@@ -188,7 +191,6 @@ class DashboardFragment : Fragment() {
                 welcomeText.visibility = View.GONE
                 adminLoginText.text = "Admin Login"
 
-                // Reset button labels
                 textDonateLabel.text = "Donate"
                 textVolunteerLabel.text = "Volunteer"
                 textEventsLabel.text = "Events"
@@ -204,6 +206,155 @@ class DashboardFragment : Fragment() {
                     .commit()
             }
         }
+
+        // read more
+        view.findViewById<Button>(R.id.buttonReadMoreNLBH)?.setOnClickListener {
+            openPdfFromAssets("nlbh.pdf")
+        }
+
+        // search routing
+        val editSearch = view.findViewById<EditText>(R.id.editSearch)
+        editSearch?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val q = s?.toString()?.trim()?.lowercase(Locale.getDefault()) ?: return
+                if (q.length < 3) return
+
+                fun clear() = editSearch.setText("")
+
+                when {
+                    q.contains("donat") -> {
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, DonateFragment())
+                            .addToBackStack(null)
+                            .commit()
+                        clear()
+                    }
+                    q.contains("volun") -> {
+                        val frag = if (isAdminMode) {
+                            AdminVolunteerApplicationsFragment()
+                        } else {
+                            VolunteerApplicationFragment()
+                        }
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, frag)
+                            .addToBackStack(null)
+                            .commit()
+                        clear()
+                    }
+                    q.contains("event") -> {
+                        val frag = EventsFragment().apply {
+                            arguments = Bundle().apply { putBoolean("isAdminMode", isAdminMode) }
+                        }
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, frag)
+                            .addToBackStack(null)
+                            .commit()
+                        clear()
+                    }
+                    q.contains("faq") -> {
+                        startActivity(Intent(requireContext(), FaqActivity::class.java))
+                        clear()
+                    }
+                    q.contains("about") || q.contains("nlbh") -> {
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, AboutUsFragment())
+                            .addToBackStack(null)
+                            .commit()
+                        clear()
+                    }
+                    q.contains("drop") || q.contains("map") || q.contains("direction") -> {
+                        val opened = openAnyFragment(
+                            "com.example.splashscreen.DropOffFragment",
+                            "com.example.splashscreen.DropOffLocationFragment",
+                            "com.example.splashscreen.DropoffFragment",
+                            "com.example.splashscreen.DropOffZoneFragment"
+                        )
+                        if (!opened) {
+                            Toast.makeText(requireContext(), "Drop-off screen not found", Toast.LENGTH_SHORT).show()
+                        }
+                        clear()
+                    }
+                    q.contains("wish") -> {
+                        val opened = openAnyFragment(
+                            "com.example.splashscreen.WishlistFragment",
+                            "com.example.splashscreen.ManageWishlistFragment",
+                            "com.example.splashscreen.PublicWishlistFragment"
+                        )
+                        if (!opened) {
+                            Toast.makeText(requireContext(), "Wishlist screen not found", Toast.LENGTH_SHORT).show()
+                        }
+                        clear()
+                    }
+                    q.contains("testi") -> {
+                        if (isAdminMode) {
+                            val opened = openAnyFragment(
+                                "com.example.splashscreen.ManageTestimonialsFragment",
+                                "com.example.splashscreen.AdminTestimonialsFragment"
+                            )
+                            if (!opened) {
+                                parentFragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container, TestimonialsFragment())
+                                    .addToBackStack(null)
+                                    .commit()
+                            }
+                        } else {
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.fragment_container, TestimonialsFragment())
+                                .addToBackStack(null)
+                                .commit()
+                        }
+                        clear()
+                    }
+                }
+            }
+        })
+
+        // bottom nav
+        val bnv = view.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bnv.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> true
+                R.id.nav_location -> {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, AboutUsFragment())
+                        .addToBackStack(null)
+                        .commit()
+                    true
+                }
+                R.id.nav_notifications -> {
+                    val frag = EventsFragment().apply {
+                        arguments = Bundle().apply { putBoolean("isAdminMode", isAdminMode) }
+                    }
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, frag)
+                        .addToBackStack(null)
+                        .commit()
+                    true
+                }
+                R.id.nav_profile -> {
+                    startActivity(Intent(requireContext(), FaqActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun openAnyFragment(vararg fqcn: String): Boolean {
+        for (name in fqcn) {
+            try {
+                val clazz = Class.forName(name).asSubclass(Fragment::class.java)
+                val frag = clazz.getDeclaredConstructor().newInstance()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, frag)
+                    .addToBackStack(null)
+                    .commit()
+                return true
+            } catch (_: Throwable) { }
+        }
+        return false
     }
 
     private fun loadSpotlightEvent() {
@@ -241,5 +392,41 @@ class DashboardFragment : Fragment() {
                     spotlightEvent = null
                 }
             }
+    }
+
+    private fun openPdfFromAssets(assetName: String) {
+        val ctx = requireContext()
+        try {
+            val outFile = File(ctx.cacheDir, assetName)
+            ctx.assets.open(assetName).use { input ->
+                FileOutputStream(outFile).use { output -> input.copyTo(output) }
+            }
+
+            val uri = FileProvider.getUriForFile(
+                ctx,
+                "${ctx.packageName}.fileprovider",
+                outFile
+            )
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/pdf")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            if (intent.resolveActivity(ctx.packageManager) != null) {
+                startActivity(intent)
+            } else {
+                startActivity(Intent(ctx, PdfViewerActivity::class.java).apply {
+                    putExtra("pdfFileName", assetName)
+                })
+            }
+        } catch (e: Exception) {
+            try {
+                startActivity(Intent(ctx, PdfViewerActivity::class.java).apply {
+                    putExtra("pdfFileName", assetName)
+                })
+            } catch (_: Exception) {
+                Toast.makeText(ctx, "Unable to open PDF", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

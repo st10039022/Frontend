@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="250dp"
+    android:layout_height="match_parent"
+    android:layout_marginEnd="8dp">
+
+    <!-- Testimonial image -->
+    <ImageView
+        android:id="@+id/ivImage"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:scaleType="centerCrop"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/testimonial_image"
+        android:background="@drawable/edittext_outline" />
+
+    <!-- Remove image button (visible only in admin/edit mode) -->
+    <ImageButton
+        android:id="@+id/btnRemove"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_margin="6dp"
+        android:layout_gravity="bottom|end"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/delete_button"
+        android:src="@drawable/ic_delete"
+        android:visibility="gone" />
+</FrameLayout>
