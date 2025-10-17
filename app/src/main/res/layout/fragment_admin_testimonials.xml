@@ -5,25 +5,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="80dp"
     android:clipToPadding="false"
     tools:context=".AdminTestimonialsFragment">
 
-    <ScrollView
+    <!-- Main scroll content -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#2E2E2E">
+        android:fillViewport="true"
+        android:background="@color/white"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Header -->
+            <!-- Header (white, centered title; back kept but hidden so IDs don’t break) -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="#2E2E2E"
+                android:background="@color/white"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:paddingTop="8dp">
@@ -35,52 +37,52 @@
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_arrow_back"
-                    android:contentDescription="Back" />
+                    android:contentDescription="Back"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="Testimonials"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </RelativeLayout>
 
-            <!-- White Content Card -->
+            <!-- Content (no card, no border; same padding style as user screen) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/card_background"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="0dp">
 
-                <!-- RecyclerView to show testimonials -->
+                <!-- Admin RecyclerView -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerAdminTestimonials"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="16dp"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
                     android:clipToPadding="false"
+                    android:paddingBottom="16dp"
                     android:scrollbars="vertical" />
             </LinearLayout>
-
-            <!-- Floating Action Button to add a new testimonial -->
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabAddTestimonial"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="Add Testimonial"
-                android:src="@drawable/ic_add_button"
-                android:tint="@android:color/white"
-                app:backgroundTint="@color/light_blue"
-                android:layout_gravity="bottom|end"
-                android:layout_marginBottom="20dp"
-                android:layout_marginEnd="10dp" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Real floating FAB (sits above content, bottom-right) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddTestimonial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Add Testimonial"
+        android:src="@drawable/ic_add_button"
+        android:tint="@android:color/white"
+        app:backgroundTint="@color/light_blue"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

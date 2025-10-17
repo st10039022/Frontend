@@ -59,7 +59,7 @@
             android:gravity="center"
             android:layout_marginBottom="8dp" />
 
-        <!-- method buttons -->
+        <!-- method buttons (responsive, no clipping) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -69,34 +69,37 @@
 
             <Button
                 android:id="@+id/btnZapper"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:text="Zapper"
-                android:textStyle="bold"
-                android:textColor="@color/black"
+                android:layout_width="105dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
                 android:background="@drawable/amount_button_outline"
-                android:layout_margin="6dp" />
+                android:text="Zapper"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnEFT"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:text="EFT"
-                android:textStyle="bold"
-                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
                 android:background="@drawable/amount_button_outline"
-                android:layout_margin="6dp" />
+                android:text="EFT"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnBabychino"
-                android:layout_width="110dp"
-                android:layout_height="40dp"
-                android:text="BabyChino"
-                android:textStyle="bold"
-                android:textColor="@color/black"
+                android:layout_width="137dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:background="@drawable/amount_button_outline"
-                android:layout_margin="6dp" />
+                android:text="BabyChino"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
         </LinearLayout>
+
 
         <!-- QR card -->
         <androidx.cardview.widget.CardView

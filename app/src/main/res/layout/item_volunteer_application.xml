@@ -34,6 +34,19 @@
             android:textColor="@android:color/darker_gray"
             android:layout_marginTop="2dp"/>
 
+        <!-- Copy email button -->
+        <Button
+            android:id="@+id/btn_copy_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copy"
+            android:textAllCaps="false"
+            android:layout_marginTop="6dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/light_blue" />
+
         <!-- Availability -->
         <TextView
             android:id="@+id/tv_availability"

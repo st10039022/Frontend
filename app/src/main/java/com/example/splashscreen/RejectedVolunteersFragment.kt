@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
-class ApprovedVolunteersFragment : Fragment() {
+class RejectedVolunteersFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: VolunteerApplicationAdapter
     private val db = FirebaseFirestore.getInstance()
@@ -20,28 +20,28 @@ class ApprovedVolunteersFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_approved_volunteers, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_rejected_volunteers, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = view.findViewById(R.id.rv_approved_volunteers)
+        recyclerView = view.findViewById(R.id.rv_rejected_volunteers)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         adapter = VolunteerApplicationAdapter(
             applications = listOf(),
-            onApprove = {},                          // not used here
-            onReject = { app -> removeFromApproved(app) },  // used as "Remove"
+            onApprove = {},                            // not used here
+            onReject = { app -> removeRejected(app) }, // small red button acts as Remove
             showActions = false
         )
         recyclerView.adapter = adapter
 
-        listenForApprovedVolunteers()
+        listenForRejectedVolunteers()
     }
 
-    private fun listenForApprovedVolunteers() {
+    private fun listenForRejectedVolunteers() {
         listener = db.collection("volunteer_applications")
-            .whereEqualTo("status", "approved")
+            .whereEqualTo("status", "rejected")
             .addSnapshotListener { snapshots, error ->
                 if (error != null) {
                     Toast.makeText(requireContext(), "Error loading volunteers", Toast.LENGTH_SHORT).show()
@@ -55,12 +55,11 @@ class ApprovedVolunteersFragment : Fragment() {
             }
     }
 
-    private fun removeFromApproved(app: VolunteerApplication) {
-        // Change to "pending" or delete() if you prefer a different workflow.
+    private fun removeRejected(app: VolunteerApplication) {
         db.collection("volunteer_applications").document(app.id)
             .update("status", "removed")
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Removed from approved", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Removed from rejected", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "Failed to remove", Toast.LENGTH_SHORT).show()

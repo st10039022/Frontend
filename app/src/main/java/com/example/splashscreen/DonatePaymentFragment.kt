@@ -2,6 +2,8 @@ package com.example.splashscreen
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.*
 import android.os.Bundle
@@ -149,20 +151,18 @@ class DonatePaymentFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.btnZapper)?.setOnClickListener { showQrDialog(R.drawable.zapper, "Zapper QR") }
-        view.findViewById<Button>(R.id.btnEFT)?.setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setTitle("EFT details")
-                .setMessage(
-                    "Ikusasalethu Baby Home\n" +
-                            "Standard Bank\n" +
-                            "Hillcrest\n" +
-                            "Account number 052660093\n" +
-                            "Branch code 045726\n" +
-                            "Reference Your Name"
-                )
-                .setPositiveButton("Close") { d, _ -> d.dismiss() }
-                .show()
+
+        // >>> Updated: EFT copyable dialog + long-press quick copy
+        view.findViewById<Button>(R.id.btnEFT)?.apply {
+            setOnClickListener { showEftDetailsDialog() }
+            setOnLongClickListener {
+                copyEftDetailsToClipboard()
+                Snackbar.make(view, "Copied EFT details", Snackbar.LENGTH_SHORT).show()
+                true
+            }
         }
+        // <<<
+
         view.findViewById<Button>(R.id.btnBabychino)?.setOnClickListener { showQrDialog(R.drawable.babychino_qr, "BabyChino QR") }
 
         // Load cached values immediately
@@ -479,6 +479,55 @@ class DonatePaymentFragment : Fragment() {
         b.setView(img)
         b.setPositiveButton("Close") { d, _ -> d.dismiss() }
         b.show()
+    }
+
+    // --- NEW: EFT copyable dialog + helper ---
+
+    private fun showEftDetailsDialog() {
+        val details = """
+            Ikusasalethu Baby Home
+            Standard Bank
+            Hillcrest
+            Account number 052660093
+            Branch code 045726
+            Reference Your Name
+        """.trimIndent()
+
+        // Selectable text so users can copy specific lines too
+        val tv = TextView(requireContext()).apply {
+            text = details
+            setTextIsSelectable(true)
+            setPadding(dpInt(16f), dpInt(12f), dpInt(16f), dpInt(8f))
+            textSize = 16f
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("EFT details")
+            .setView(tv)
+            .setPositiveButton("Copy") { d, _ ->
+                copyToClipboard("EFT details", details)
+                Snackbar.make(requireView(), "EFT details copied", Snackbar.LENGTH_SHORT).show()
+                d.dismiss()
+            }
+            .setNegativeButton("Close", null)
+            .show()
+    }
+
+    private fun copyEftDetailsToClipboard() {
+        val details = """
+            Ikusasalethu Baby Home
+            Standard Bank
+            Hillcrest
+            Account number 052660093
+            Branch code 045726
+            Reference Your Name
+        """.trimIndent()
+        copyToClipboard("EFT details", details)
+    }
+
+    private fun copyToClipboard(label: String, text: String) {
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText(label, text))
     }
 
     // ---------------------------
