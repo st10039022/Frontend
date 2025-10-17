@@ -5,22 +5,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
-class TestimonialsAdapter (
+class TestimonialsAdapter(
     private val items: MutableList<Testimonial>,
     private val isAdmin: Boolean = false,
     private val onEdit: ((Testimonial) -> Unit)? = null,
     private val onDelete: ((Testimonial) -> Unit)? = null,
-    private val onImageRemove: ((testimonial: Testimonial, imageUrl: String) -> Unit)? = null
 ) : RecyclerView.Adapter<TestimonialsAdapter.VH>() {
 
     inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val rvImages: RecyclerView = itemView.findViewById(R.id.recyclerImages)
         val tvName: TextView = itemView.findViewById(R.id.tvName)
         val tvMessage: TextView = itemView.findViewById(R.id.tvMessage)
         val tvDate: TextView = itemView.findViewById(R.id.tvDate)
@@ -38,20 +34,13 @@ class TestimonialsAdapter (
         val t = items[position]
         holder.tvName.text = t.familyName
         holder.tvMessage.text = t.message
-        val createdDate = t.createdAt.toDate() // Timestamp -> Date
+
+        val createdDate = t.createdAt.toDate()
         holder.tvDate.text = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(createdDate)
 
-        // images horizontal
-        holder.rvImages.layoutManager =
-            LinearLayoutManager(holder.itemView.context, RecyclerView.HORIZONTAL, false)
-        val imagesAdapter = ImagesAdapter(t.images, isAdmin,
-            onImageClick = { /* maybe show full screen */ },
-            onRemoveClick = { url ->
-                onImageRemove?.invoke(t, url)
-            })
-        holder.rvImages.adapter = imagesAdapter
+        // No images shown, no add/edit/remove for photos
 
-        // admin controls
+        // Admin controls (for text testimonial only)
         holder.adminButtons.visibility = if (isAdmin) View.VISIBLE else View.GONE
         holder.btnEdit?.setOnClickListener { onEdit?.invoke(t) }
         holder.btnDelete?.setOnClickListener { onDelete?.invoke(t) }

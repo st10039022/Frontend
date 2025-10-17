@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import java.text.SimpleDateFormat
@@ -22,11 +23,16 @@ class EventDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val back = view.findViewById<ImageView>(R.id.iv_back)
+        back.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         val name = arguments?.getString("name") ?: ""
         val desc = arguments?.getString("description") ?: ""
         val dateMillis = arguments?.getLong("dateMillis") ?: 0L
-        val start = arguments?.getString("startTime") ?: ""
-        val end = arguments?.getString("endTime") ?: ""
+        val start24 = arguments?.getString("startTime") ?: ""
+        val end24 = arguments?.getString("endTime") ?: ""
 
         val tvName = view.findViewById<TextView>(R.id.tvEventName)
         val tvDate = view.findViewById<TextView>(R.id.tvEventDate)
@@ -36,8 +42,21 @@ class EventDetailsFragment : Fragment() {
         tvName.text = name
         tvDesc.text = desc
 
-        val fmt = SimpleDateFormat("EEEE, dd MMM yyyy", Locale.getDefault())
-        tvDate.text = fmt.format(Date(dateMillis))
-        tvTime.text = "$start - $end"
+        val dateFmt = SimpleDateFormat("EEEE, dd MMM yyyy", Locale.getDefault())
+        tvDate.text = dateFmt.format(Date(dateMillis))
+
+        // Display times as "hh:mm a" while you store "HH:mm"
+        fun hhmmA(hhmm24: String): String {
+            return try {
+                val p = SimpleDateFormat("HH:mm", Locale.getDefault())
+                val d = p.parse(hhmm24)
+                SimpleDateFormat("hh:mm a", Locale.getDefault()).format(d!!)
+            } catch (_: Exception) {
+                hhmm24 // fallback
+            }
+        }
+        val startDisp = hhmmA(start24)
+        val endDisp = hhmmA(end24)
+        tvTime.text = "$startDisp - $endDisp"
     }
 }

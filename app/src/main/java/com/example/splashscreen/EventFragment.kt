@@ -1,11 +1,12 @@
 package com.example.splashscreen
 
-import android.app.DatePickerDialog
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class EventsFragment : Fragment() {
+
     private lateinit var recycler: RecyclerView
     private var upcomingRecycler: RecyclerView? = null
     private lateinit var selectedDateText: TextView
@@ -24,139 +26,63 @@ class EventsFragment : Fragment() {
     private var upcomingHeader: TextView? = null
 
     private lateinit var btnAddEvent: Button
-    private lateinit var layoutAddForm: LinearLayout
-    private lateinit var etName: EditText
-    private lateinit var etDesc: EditText
-    private lateinit var etDate: EditText
-    private lateinit var etStart: EditText
-    private lateinit var etEnd: EditText
-    private lateinit var btnSubmit: Button
 
     private val db = FirebaseFirestore.getInstance()
+    private var isAdminMode: Boolean = false
+    private var currentSelectedDayStart: Long = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_event, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_event, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Admin UI elements
-        btnAddEvent = view.findViewById(R.id.btn_add_event)
-        layoutAddForm = view.findViewById(R.id.layout_add_event_form)
-        etName = view.findViewById(R.id.et_event_name)
-        etDesc = view.findViewById(R.id.et_event_desc)
-        etDate = view.findViewById(R.id.et_event_date)
-        etStart = view.findViewById(R.id.et_event_start_time)
-        etEnd = view.findViewById(R.id.et_event_end_time)
-        btnSubmit = view.findViewById(R.id.btn_submit_event)
+        // read arg if present, otherwise fall back to global session flag
+        isAdminMode = arguments?.getBoolean("isAdminMode", SessionManager.isAdmin)
+            ?: SessionManager.isAdmin
 
-        // Recycler and views
+        btnAddEvent = view.findViewById(R.id.btn_add_event)
         calendarView = view.findViewById(R.id.calendar_view)
         selectedDateText = view.findViewById(R.id.tv_selected_date)
         noEventsDayText = view.findViewById(R.id.tv_no_events_day)
+
         recycler = view.findViewById(R.id.rv_events)
         recycler.layoutManager = LinearLayoutManager(requireContext())
-        adapter = EventsListAdapter(emptyList())
+        adapter = EventsListAdapter(
+            items = emptyList(),
+            isAdmin = isAdminMode,
+            onView = { e -> openDetails(e) },
+            onEdit = { e -> openEditor(e.id) },
+            onDelete = { e -> confirmDelete(e) }
+        )
         recycler.adapter = adapter
 
         upcomingRecycler = view.findViewById(R.id.rv_upcoming)
         upcomingHeader = view.findViewById(R.id.tv_upcoming_header)
         if (upcomingRecycler != null) {
             upcomingRecycler!!.layoutManager = LinearLayoutManager(requireContext())
-            upcomingAdapter = EventsListAdapter(emptyList())
+            upcomingAdapter = EventsListAdapter(
+                items = emptyList(),
+                isAdmin = isAdminMode,
+                onView = { e -> openDetails(e) },
+                onEdit = { e -> openEditor(e.id) },
+                onDelete = { e -> confirmDelete(e) }
+            )
             upcomingRecycler!!.adapter = upcomingAdapter
         }
 
-        // Check if admin
-        val isAdmin = arguments?.getBoolean("isAdminMode", false) ?: false
-        if (isAdmin) {
-            btnAddEvent.visibility = View.VISIBLE
-        } else {
-            btnAddEvent.visibility = View.GONE
-            layoutAddForm.visibility = View.GONE
-        }
-
-        // Toggle form visibility
-        btnAddEvent.setOnClickListener {
-            layoutAddForm.visibility =
-                if (layoutAddForm.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-        }
-
-        // ---- DATE PICKER SETUP ----
-        etDate.setOnClickListener {
-            val cal = Calendar.getInstance()
-            val datePicker = DatePickerDialog(requireContext(),
-                { _, year, month, dayOfMonth ->
-                    etDate.setText(String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year))
-                },
-                cal.get(Calendar.YEAR),
-                cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH)
-            )
-            datePicker.show()
-        }
-
-        // Submit new event
-        btnSubmit.setOnClickListener {
-            val name = etName.text.toString().trim()
-            val desc = etDesc.text.toString().trim()
-            val dateStr = etDate.text.toString().trim()
-            val start = etStart.text.toString().trim()
-            val end = etEnd.text.toString().trim()
-
-            if (name.isEmpty() || desc.isEmpty() || dateStr.isEmpty() || start.isEmpty() || end.isEmpty()) {
-                Toast.makeText(requireContext(), "Fill all fields", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val dateMillis = parseDateToMillis(dateStr)
-
-            // Create event object
-            val newEvent = Event(
-                id = "",
-                name = name,
-                description = desc,
-                dateMillis = dateMillis,
-                startTime = start,
-                endTime = end
-            )
-
-            // Save to Firestore
-            db.collection("events")
-                .add(newEvent)
-                .addOnSuccessListener { docRef ->
-                    docRef.update("id", docRef.id)
-                    Toast.makeText(requireContext(), "Event added", Toast.LENGTH_SHORT).show()
-
-                    // Clear form
-                    etName.text.clear()
-                    etDesc.text.clear()
-                    etDate.text.clear()
-                    etStart.text.clear()
-                    etEnd.text.clear()
-                    layoutAddForm.visibility = View.GONE
-
-                    // Reload data
-                    loadDay(dateMillis)
-                    loadUpcoming(dateMillis)
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(requireContext(), "Failed: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-                }
-        }
+        btnAddEvent.visibility = if (isAdminMode) View.VISIBLE else View.GONE
+        btnAddEvent.setOnClickListener { openEditor(null) } // null => create
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            val dayStart = getStartOfDayMillis(year, month, dayOfMonth)
-            updateSelectedDateText(dayStart)
-            loadDay(dayStart)
+            currentSelectedDayStart = getStartOfDayMillis(year, month, dayOfMonth)
+            updateSelectedDateText(currentSelectedDayStart)
+            loadDay(currentSelectedDayStart)
         }
 
-        // Default = today
         val initCal = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -164,36 +90,79 @@ class EventsFragment : Fragment() {
             set(Calendar.MILLISECOND, 0)
         }
         calendarView.date = initCal.timeInMillis
-        updateSelectedDateText(initCal.timeInMillis)
-        loadDay(initCal.timeInMillis)
-        loadUpcoming(initCal.timeInMillis)
+        currentSelectedDayStart = initCal.timeInMillis
+        updateSelectedDateText(currentSelectedDayStart)
+
+        loadDay(currentSelectedDayStart)
+        loadUpcoming(currentSelectedDayStart)
     }
 
-    private fun parseDateToMillis(dateStr: String): Long {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val date = sdf.parse(dateStr)
-        return date?.time ?: getStartOfDayMillisFromCalendar()
-    }
-
-    private fun getStartOfDayMillisFromCalendar(): Long {
-        val cal = Calendar.getInstance()
-        cal.set(Calendar.HOUR_OF_DAY, 0)
-        cal.set(Calendar.MINUTE, 0)
-        cal.set(Calendar.SECOND, 0)
-        cal.set(Calendar.MILLISECOND, 0)
-        return cal.timeInMillis
-    }
-
-    private fun getStartOfDayMillis(year: Int, monthZeroBased: Int, day: Int): Long {
-        val cal = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-            set(year, monthZeroBased, day)
+    override fun onResume() {
+        super.onResume()
+        // admin status might have changed after login/logout; refresh UI + adapters
+        val newAdmin = SessionManager.isAdmin
+        if (newAdmin != isAdminMode) {
+            isAdminMode = newAdmin
+            btnAddEvent.visibility = if (isAdminMode) View.VISIBLE else View.GONE
+            adapter.setAdmin(isAdminMode)
+            upcomingAdapter?.setAdmin(isAdminMode)
         }
-        return cal.timeInMillis
+        if (currentSelectedDayStart == 0L) {
+            val cal = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+            }
+            currentSelectedDayStart = cal.timeInMillis
+        }
+        loadDay(currentSelectedDayStart)
+        loadUpcoming(currentSelectedDayStart)
     }
+
+    // -------- navigation --------
+
+    private fun openDetails(e: Event) {
+        val b = Bundle().apply {
+            putString("name", e.name)
+            putString("description", e.description)
+            putLong("dateMillis", e.dateMillis)
+            putString("startTime", e.startTime)
+            putString("endTime", e.endTime)
+        }
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, EventDetailsFragment().apply { arguments = b })
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun openEditor(eventId: String?) {
+        val b = Bundle().apply { if (eventId != null) putString("eventId", eventId) }
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, EventEditorFragment().apply { arguments = b })
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun confirmDelete(e: Event) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete event")
+            .setMessage("Are you sure you want to delete “${e.name}”?")
+            .setPositiveButton("Delete") { d, _ ->
+                FirebaseFirestore.getInstance().collection("events").document(e.id).delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show()
+                        loadDay(currentSelectedDayStart)
+                        loadUpcoming(currentSelectedDayStart)
+                    }
+                    .addOnFailureListener { ex ->
+                        Toast.makeText(requireContext(), "Failed: ${ex.localizedMessage}", Toast.LENGTH_LONG).show()
+                    }
+                d.dismiss()
+            }
+            .setNegativeButton("Cancel") { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    // -------- loading --------
 
     private fun updateSelectedDateText(dayStartMillis: Long) {
         val fmt = SimpleDateFormat("EEEE, dd MMM yyyy", Locale.getDefault())
@@ -207,14 +176,14 @@ class EventsFragment : Fragment() {
             .addOnSuccessListener { snap ->
                 val events = snap.documents.map { d ->
                     Event(
-                        id = d.id,
+                        id = d.getString("id") ?: d.id,
                         name = d.getString("name") ?: "",
                         description = d.getString("description") ?: "",
                         dateMillis = d.getLong("dateMillis") ?: 0L,
                         startTime = d.getString("startTime") ?: "",
                         endTime = d.getString("endTime") ?: ""
                     )
-                }.sortedBy { it.startTime }
+                }.sortedWith(compareBy<Event> { it.startTime }.thenBy { it.name })
                 adapter.update(events)
                 noEventsDayText.visibility = if (events.isEmpty()) View.VISIBLE else View.GONE
             }
@@ -228,7 +197,7 @@ class EventsFragment : Fragment() {
             .addOnSuccessListener { snap ->
                 val events = snap.documents.map { d ->
                     Event(
-                        id = d.id,
+                        id = d.getString("id") ?: d.id,
                         name = d.getString("name") ?: "",
                         description = d.getString("description") ?: "",
                         dateMillis = d.getLong("dateMillis") ?: 0L,
@@ -240,35 +209,74 @@ class EventsFragment : Fragment() {
                 upcomingHeader?.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
             }
     }
+
+    // -------- utils --------
+
+    private fun getStartOfDayMillis(year: Int, monthZeroBased: Int, day: Int): Long {
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            set(year, monthZeroBased, day)
+        }
+        return cal.timeInMillis
+    }
 }
 
-// Adapter stays same
+// ---------- adapter (with admin toggle) ----------
+
 private class EventsListAdapter(
-    private var items: List<Event>
+    private var items: List<Event>,
+    private var isAdmin: Boolean,
+    private val onView: (Event) -> Unit,
+    private val onEdit: (Event) -> Unit,
+    private val onDelete: (Event) -> Unit
 ) : RecyclerView.Adapter<EventsListAdapter.EventViewHolder>() {
 
     class EventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.tv_event_title)
         val subtitle: TextView = view.findViewById(R.id.tv_event_subtitle)
+        val btnEdit: ImageView = view.findViewById(R.id.iv_edit)
+        val btnDelete: ImageView = view.findViewById(R.id.iv_delete)
+        val card: CardView = view as CardView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_event, parent, false)
         return EventViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val e = items[position]
         val dateStr = SimpleDateFormat("EEE, dd MMM", Locale.getDefault()).format(Date(e.dateMillis))
-        holder.title.text = "${e.name} (${e.startTime} - ${e.endTime})"
+
+        fun disp(hhmm24: String): String = try {
+            val p = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val d = p.parse(hhmm24)
+            SimpleDateFormat("hh:mm a", Locale.getDefault()).format(d!!)
+        } catch (_: Exception) { hhmm24 }
+
+        holder.title.text = "${e.name} (${disp(e.startTime)} - ${disp(e.endTime)})"
         holder.subtitle.text = "$dateStr • ${e.description}"
 
-        val colors = listOf(
-            0xFF64B5F6.toInt(),
-            0xFFF06292.toInt(),
-            0xFFBA68C8.toInt()
-        )
-        holder.itemView.setBackgroundColor(colors[position % colors.size])
+        val colors = intArrayOf(0xFF64B5F6.toInt(), 0xFFF06292.toInt(), 0xFFBA68C8.toInt())
+        holder.card.setCardBackgroundColor(colors[position % colors.size])
+
+        holder.itemView.setOnClickListener { onView(e) }
+
+        if (isAdmin) {
+            holder.btnEdit.visibility = View.VISIBLE
+            holder.btnDelete.visibility = View.VISIBLE
+            holder.btnEdit.setOnClickListener { onEdit(e) }
+            holder.btnDelete.setOnClickListener { onDelete(e) }
+        } else {
+            holder.btnEdit.visibility = View.GONE
+            holder.btnDelete.visibility = View.GONE
+            holder.btnEdit.setOnClickListener(null)
+            holder.btnDelete.setOnClickListener(null)
+        }
     }
 
     override fun getItemCount(): Int = items.size
@@ -276,5 +284,12 @@ private class EventsListAdapter(
     fun update(newItems: List<Event>) {
         items = newItems
         notifyDataSetChanged()
+    }
+
+    fun setAdmin(value: Boolean) {
+        if (isAdmin != value) {
+            isAdmin = value
+            notifyDataSetChanged()
+        }
     }
 }

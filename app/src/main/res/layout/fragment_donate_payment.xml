@@ -14,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:gravity="center_horizontal">
 
         <!-- header -->
         <LinearLayout
@@ -58,6 +59,7 @@
             android:gravity="center"
             android:layout_marginBottom="8dp" />
 
+        <!-- method buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,72 +67,36 @@
             android:gravity="center"
             android:layout_marginBottom="24dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="By continuing you agree to our "
-                android:textSize="14sp"
-                android:textColor="@color/grey" />
+            <Button
+                android:id="@+id/btnZapper"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:text="Zapper"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:background="@drawable/amount_button_outline"
+                android:layout_margin="6dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Terms"
-                android:textSize="14sp"
-                android:textColor="@color/light_blue"
-                android:textStyle="bold" />
+            <Button
+                android:id="@+id/btnEFT"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:text="EFT"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:background="@drawable/amount_button_outline"
+                android:layout_margin="6dp" />
+
+            <Button
+                android:id="@+id/btnBabychino"
+                android:layout_width="110dp"
+                android:layout_height="40dp"
+                android:text="BabyChino"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:background="@drawable/amount_button_outline"
+                android:layout_margin="6dp" />
         </LinearLayout>
-
-        <!-- method buttons -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/white">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:padding="16dp">
-
-                <Button
-                    android:id="@+id/btnZapper"
-                    android:layout_width="80dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="4dp"
-                    android:text="Zapper"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:background="@drawable/amount_button_outline" />
-
-                <Button
-                    android:id="@+id/btnEFT"
-                    android:layout_width="80dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="4dp"
-                    android:text="EFT"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:background="@drawable/amount_button_outline" />
-
-                <Button
-                    android:id="@+id/btnBabychino"
-                    android:layout_width="90dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="4dp"
-                    android:text="BabyChino"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:background="@drawable/amount_button_outline" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
         <!-- QR card -->
         <androidx.cardview.widget.CardView
@@ -200,45 +166,132 @@
             android:gravity="center"
             android:layout_marginBottom="16dp" />
 
-        <!-- bottle card white background -->
+        <!-- bottle card centered -->
         <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             app:cardCornerRadius="18dp"
             app:cardElevation="6dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardUseCompatPadding="true"
+            app:cardBackgroundColor="@android:color/transparent"
             android:layout_marginBottom="16dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- inner container with blue background -->
+            <FrameLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="24dp">
+                android:background="@drawable/blue_bottle_bg"
+                android:padding="24dp"
+                android:foregroundGravity="center">
 
+                <!-- precise clipping window mapped in code to the bottle's inner cavity -->
+                <FrameLayout
+                    android:id="@+id/milkClip"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="top|start"
+                    android:clipChildren="true"
+                    android:clipToPadding="true"
+                    android:visibility="invisible">
+
+                    <!-- solid base so sides & bottom are always filled -->
+                    <View
+                        android:id="@+id/milkSolid"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:background="@android:color/white" />
+
+                    <!-- SURFACE BAND that tracks the current level; waves live here -->
+                    <FrameLayout
+                        android:id="@+id/milkSurface"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="bottom"
+                        android:clipChildren="true"
+                        android:clipToPadding="true">
+
+                        <!-- back wave -->
+                        <ImageView
+                            android:id="@+id/milkFillBack"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="bottom|center_horizontal"
+                            android:src="@drawable/milk_wave_back"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerCrop" />
+
+                        <!-- front wave -->
+                        <ImageView
+                            android:id="@+id/milkFillFront"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="bottom|center_horizontal"
+                            android:src="@drawable/milk_wave_front"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerCrop" />
+                    </FrameLayout>
+                </FrameLayout>
+
+                <!-- bottle outline on top (transparent fill; outline only) -->
                 <ImageView
+                    android:id="@+id/imageBottle"
                     android:layout_width="250dp"
                     android:layout_height="250dp"
+                    android:layout_gravity="center"
                     android:src="@drawable/ic_baby_bottle_outline"
                     android:contentDescription="Baby bottle"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter" />
-
-                <!-- removed the old divider line -->
-            </LinearLayout>
+            </FrameLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- totals -->
+        <!-- progress label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This month's donation progress"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="6dp" />
+
+        <!-- progress bar -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/donationProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_marginBottom="12dp"
+            android:progress="0"
+            app:trackColor="@color/light_grey"
+            app:indicatorColor="@color/light_blue" />
+
+        <!-- public goal reached line (shown to non-admins when goal is reached) -->
+        <TextView
+            android:id="@+id/textGoalPublic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Goal reached — thank you for your support"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/green"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone" />
+
+        <!-- admin only numbers -->
         <TextView
             android:id="@+id/textRaised"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Raised R 0.00"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:gravity="center"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginBottom="4dp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textGoal"
@@ -248,8 +301,22 @@
             android:textSize="16sp"
             android:textColor="@color/grey"
             android:gravity="center"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="24dp"
+            android:visibility="gone" />
 
+        <!-- admin edit -->
+        <Button
+            android:id="@+id/btnEditDonation"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Edit Donation Progress"
+            android:backgroundTint="@color/green"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone" />
+
+        <!-- done -->
         <Button
             android:id="@+id/button"
             android:layout_width="match_parent"
@@ -260,6 +327,5 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
-
     </LinearLayout>
 </ScrollView>

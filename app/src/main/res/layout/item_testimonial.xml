@@ -23,15 +23,6 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <!-- Horizontal RecyclerView for Images -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerImages"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:overScrollMode="never"
-        android:nestedScrollingEnabled="false"
-        android:layout_marginBottom="8dp" />
-
     <!-- Date -->
     <TextView
         android:id="@+id/tvDate"

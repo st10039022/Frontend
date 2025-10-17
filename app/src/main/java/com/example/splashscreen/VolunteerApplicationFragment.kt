@@ -1,26 +1,22 @@
 package com.example.splashscreen
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class VolunteerApplicationFragment : Fragment() {
 
     private var selectedStartDate: Long? = null
     private var selectedEndDate: Long? = null
-    private var selectedFileUri: Uri? = null
-
-    private val FILE_PICK_CODE = 100
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,8 +29,8 @@ class VolunteerApplicationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val db = FirebaseFirestore.getInstance()
-        val storage = FirebaseStorage.getInstance()
 
+        val backBtn = view.findViewById<ImageView>(R.id.iv_back)
         val nameEditText = view.findViewById<EditText>(R.id.et_name)
         val emailEditText = view.findViewById<EditText>(R.id.et_email)
         val whyEditText = view.findViewById<EditText>(R.id.et_why)
@@ -42,22 +38,18 @@ class VolunteerApplicationFragment : Fragment() {
         val submitButton = view.findViewById<Button>(R.id.btn_submit_application)
         val rlSelectAvailability = view.findViewById<RelativeLayout>(R.id.rl_select_availability)
         val selectedDatesTextView = view.findViewById<TextView>(R.id.tv_selected_dates)
-        val tvSelectedFile = view.findViewById<TextView>(R.id.tv_selected_file)
-        val btnUploadFile = view.findViewById<Button>(R.id.btn_upload_file)
 
-        // Date Picker
+        // Back button (dashboard remains without back as requested)
+        backBtn.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        // Date Range Picker
         rlSelectAvailability.setOnClickListener {
             showDateRangePicker(selectedDatesTextView)
         }
 
-        // File Picker
-        btnUploadFile.setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "*/*" // allow any file type
-            startActivityForResult(Intent.createChooser(intent, "Select file"), FILE_PICK_CODE)
-        }
-
-        // Submit Button
+        // Submit
         submitButton.setOnClickListener {
             val name = nameEditText.text.toString().trim()
             val email = emailEditText.text.toString().trim()
@@ -77,8 +69,10 @@ class VolunteerApplicationFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Prepare application map
-            val application = hashMapOf<String, Any>(
+            // Create document with generated id and include id field in data
+            val docRef = db.collection("volunteer_applications").document()
+            val application = mapOf(
+                "id" to docRef.id,
                 "name" to name,
                 "email" to email,
                 "why" to why,
@@ -87,79 +81,27 @@ class VolunteerApplicationFragment : Fragment() {
                 "status" to "pending"
             )
 
-            // If file is selected, upload it first
-            if (selectedFileUri != null) {
-                val storageRef = storage.reference.child("volunteer_files/${UUID.randomUUID()}")
-                storageRef.putFile(selectedFileUri!!)
-                    .addOnSuccessListener {
-                        storageRef.downloadUrl.addOnSuccessListener { uri ->
-                            application["fileUrl"] = uri.toString()
-                            saveApplicationToFirestore(db, application, nameEditText, emailEditText, whyEditText,
-                                experienceEditText, selectedDatesTextView, tvSelectedFile)
-                        }.addOnFailureListener {
-                            Toast.makeText(requireContext(), "File upload failed, but application can still be submitted.", Toast.LENGTH_LONG).show()
-                            saveApplicationToFirestore(db, application, nameEditText, emailEditText, whyEditText,
-                                experienceEditText, selectedDatesTextView, tvSelectedFile)
-                        }
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(requireContext(), "File upload failed, but application can still be submitted.", Toast.LENGTH_LONG).show()
-                        saveApplicationToFirestore(db, application, nameEditText, emailEditText, whyEditText,
-                            experienceEditText, selectedDatesTextView, tvSelectedFile)
-                    }
-            } else {
-                // No file selected, just save
-                saveApplicationToFirestore(db, application, nameEditText, emailEditText, whyEditText,
-                    experienceEditText, selectedDatesTextView, tvSelectedFile)
-            }
-        }
-    }
+            docRef.set(application)
+                .addOnSuccessListener {
+                    Toast.makeText(requireContext(), "Application submitted successfully!", Toast.LENGTH_LONG).show()
 
-    private fun saveApplicationToFirestore(
-        db: FirebaseFirestore,
-        application: HashMap<String, Any>,
-        nameEditText: EditText,
-        emailEditText: EditText,
-        whyEditText: EditText,
-        experienceEditText: EditText,
-        selectedDatesTextView: TextView,
-        tvSelectedFile: TextView
-    ) {
-        db.collection("volunteer_applications")
-            .add(application)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Application submitted successfully!", Toast.LENGTH_LONG).show()
+                    // Clear form
+                    nameEditText.text.clear()
+                    emailEditText.text.clear()
+                    whyEditText.text.clear()
+                    experienceEditText.text.clear()
+                    selectedDatesTextView.text = ""
+                    selectedStartDate = null
+                    selectedEndDate = null
 
-                // Clear form
-                nameEditText.text.clear()
-                emailEditText.text.clear()
-                whyEditText.text.clear()
-                experienceEditText.text.clear()
-                selectedDatesTextView.text = ""
-                tvSelectedFile.text = "Upload Here"
-                selectedStartDate = null
-                selectedEndDate = null
-                selectedFileUri = null
-
-                // Navigate back to DashboardFragment
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, DashboardFragment())
-                    .commit()
-            }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to submit application", Toast.LENGTH_LONG).show()
-            }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == FILE_PICK_CODE && resultCode == Activity.RESULT_OK) {
-            selectedFileUri = data?.data
-            selectedFileUri?.let {
-                val fileName = it.lastPathSegment?.substringAfterLast("/") ?: "Selected File"
-                val tvSelectedFile = view?.findViewById<TextView>(R.id.tv_selected_file)
-                tvSelectedFile?.text = fileName
-            }
+                    // Navigate back to DashboardFragment
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, DashboardFragment())
+                        .commit()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(requireContext(), "Failed to submit application", Toast.LENGTH_LONG).show()
+                }
         }
     }
 
@@ -175,33 +117,42 @@ class VolunteerApplicationFragment : Fragment() {
         val startMonth = today.get(Calendar.MONTH)
         val startDay = today.get(Calendar.DAY_OF_MONTH)
 
-        val startPicker = android.app.DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
-            val startCal = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-                set(year, month, dayOfMonth)
-            }
-            selectedStartDate = startCal.timeInMillis
-
-            val endPicker = android.app.DatePickerDialog(requireContext(), { _, endYear, endMonth, endDayOfMonth ->
-                val endCal = Calendar.getInstance().apply {
+        val startPicker = android.app.DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                val startCal = Calendar.getInstance().apply {
                     set(Calendar.HOUR_OF_DAY, 0)
                     set(Calendar.MINUTE, 0)
                     set(Calendar.SECOND, 0)
                     set(Calendar.MILLISECOND, 0)
-                    set(endYear, endMonth, endDayOfMonth)
+                    set(year, month, dayOfMonth)
                 }
-                selectedEndDate = endCal.timeInMillis
+                selectedStartDate = startCal.timeInMillis
 
-                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                selectedDatesTextView.text = "${sdf.format(Date(selectedStartDate!!))} to ${sdf.format(Date(selectedEndDate!!))}"
-            }, startYear, startMonth, startDay)
+                val endPicker = android.app.DatePickerDialog(
+                    requireContext(),
+                    { _, endYear, endMonth, endDayOfMonth ->
+                        val endCal = Calendar.getInstance().apply {
+                            set(Calendar.HOUR_OF_DAY, 0)
+                            set(Calendar.MINUTE, 0)
+                            set(Calendar.SECOND, 0)
+                            set(Calendar.MILLISECOND, 0)
+                            set(endYear, endMonth, endDayOfMonth)
+                        }
+                        selectedEndDate = endCal.timeInMillis
 
-            endPicker.datePicker.minDate = startCal.timeInMillis
-            endPicker.show()
-        }, startYear, startMonth, startDay)
+                        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        selectedDatesTextView.text =
+                            "${sdf.format(Date(selectedStartDate!!))} to ${sdf.format(Date(selectedEndDate!!))}"
+                    },
+                    startYear, startMonth, startDay
+                )
+
+                endPicker.datePicker.minDate = startCal.timeInMillis
+                endPicker.show()
+            },
+            startYear, startMonth, startDay
+        )
 
         startPicker.datePicker.minDate = today.timeInMillis
         startPicker.show()

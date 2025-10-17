@@ -4,34 +4,9 @@
     android:viewportWidth="140"
     android:viewportHeight="280">
 
-    <!-- bottle plastic tint -->
+    <!-- dummy -->
     <path
-        android:fillColor="#CFEFFF"
-        android:pathData="
-            M36,84
-            L104,84
-            L104,218
-            Q104,236 88,236
-            L52,236
-            Q36,236 36,218
-            Z" />
-
-    <!-- milk inside -->
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="
-            M38,218
-            C46,214 58,226 70,222
-            C82,218 94,226 102,220
-            L102,236
-            Q102,236 88,236
-            L52,236
-            Q38,236 38,236
-            Z" />
-
-    <!-- dummy bulb taller and slimmer -->
-    <path
-        android:fillColor="#00000000"
+        android:fillColor="#F2C99D"
         android:strokeColor="#000000"
         android:strokeWidth="6"
         android:strokeLineJoin="round"
@@ -44,27 +19,25 @@
             L56,24
             Z" />
 
-    <!-- cap ring slimmer no overhang -->
+    <!-- cap ring -->
     <path
-        android:fillColor="#CFEFFF"
+        android:fillColor="#4FC3F7"
         android:strokeColor="#000000"
         android:strokeWidth="6"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
-        android:pathData="
-            M30,28 L110,28 L110,40 L30,40 Z" />
+        android:pathData="M30,28 L110,28 L110,40 L30,40 Z" />
 
     <!-- neck -->
     <path
-        android:fillColor="#CFEFFF"
+        android:fillColor="#EAF4FF"
         android:strokeColor="#000000"
         android:strokeWidth="6"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
-        android:pathData="
-            M44,40 L96,40 L96,60 L44,60 Z" />
+        android:pathData="M44,40 L96,40 L96,60 L44,60 Z" />
 
-    <!-- bottle body with rounded bottom -->
+    <!-- bottle body-->
     <path
         android:fillColor="#00000000"
         android:strokeColor="#000000"

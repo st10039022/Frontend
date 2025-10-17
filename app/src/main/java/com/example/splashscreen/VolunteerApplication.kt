@@ -5,7 +5,7 @@ data class VolunteerApplication(
     val name: String = "",
     val email: String = "",
     val availability: String = "",
-    val status: String = "",
+    val status: String = "pending",
     val why: String = "",
     val experience: String = ""
 )

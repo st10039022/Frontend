@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Add Event Button (visible only to admin) -->
+        <!-- Add Event (visible only to admin via code) -->
         <Button
             android:id="@+id/btn_add_event"
             android:layout_width="wrap_content"
@@ -28,106 +29,6 @@
             android:textStyle="bold"
             android:background="@null"/>
 
-        <!-- Add Event Form -->
-        <LinearLayout
-            android:id="@+id/layout_add_event_form"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:background="@color/light_blue"
-            android:padding="16dp"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="8dp"
-            android:clipChildren="false"
-            android:elevation="4dp"
-            android:clipToPadding="false"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:backgroundTint="@color/light_blue">
-
-            <!-- Event Name -->
-            <EditText
-                android:id="@+id/et_event_name"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Event name"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:background="@android:color/white"
-                android:textColor="@color/black"
-                android:layout_marginBottom="12dp"
-                android:inputType="text"
-                android:drawablePadding="8dp"/>
-
-            <!-- Event Description -->
-            <EditText
-                android:id="@+id/et_event_desc"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Description"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:background="@android:color/white"
-                android:textColor="@color/black"
-                android:layout_marginBottom="12dp"
-                android:inputType="text"/>
-
-            <!-- Event Date Picker -->
-            <EditText
-                android:id="@+id/et_event_date"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Select date"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:background="@android:color/white"
-                android:textColor="@color/black"
-                android:layout_marginBottom="12dp"
-                android:focusable="false"
-                android:clickable="true"/>
-
-
-            <!-- Event Start Time -->
-            <EditText
-                android:id="@+id/et_event_start_time"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Start time (HH:mm)"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:background="@android:color/white"
-                android:textColor="@color/black"
-                android:layout_marginBottom="12dp"
-                android:inputType="time"/>
-
-            <!-- Event End Time -->
-            <EditText
-                android:id="@+id/et_event_end_time"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="End time (HH:mm)"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:background="@android:color/white"
-                android:textColor="@color/black"
-                android:layout_marginBottom="16dp"
-                android:inputType="time"/>
-
-            <!-- Submit Event -->
-            <Button
-                android:id="@+id/btn_submit_event"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Submit Event"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-                android:backgroundTint="@color/light_blue"
-                android:background="@null"/>
-        </LinearLayout>
-
         <!-- Calendar -->
         <CalendarView
             android:id="@+id/calendar_view"
@@ -135,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Selected Date Text -->
+        <!-- Selected Date -->
         <TextView
             android:id="@+id/tv_selected_date"
             android:layout_width="wrap_content"
@@ -157,7 +58,7 @@
             android:textColor="@color/grey"
             android:layout_marginBottom="8dp"/>
 
-        <!-- RecyclerView for events on selected day -->
+        <!-- Events on selected day -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_events"
             android:layout_width="match_parent"

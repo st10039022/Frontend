@@ -63,6 +63,9 @@ class DashboardFragment : Fragment() {
         textAboutLabel = view.findViewById(R.id.textAboutLabel)
         textFaqLabel = view.findViewById(R.id.textFaqLabel)
 
+        // hide local bottom nav if present (prevents double nav)
+        view.findViewById<BottomNavigationView?>(R.id.bottomNavigationView)?.visibility = View.GONE
+
         loadSpotlightEvent()
 
         if (isAdminMode) {
@@ -87,21 +90,23 @@ class DashboardFragment : Fragment() {
             textFaqLabel.text = "FAQ"
         }
 
-        // donate
+        // donate -> open screen and clear bottom nav highlight
         view.findViewById<LinearLayout>(R.id.buttonDonateDashboard).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, DonateFragment())
                 .addToBackStack(null)
                 .commit()
+            clearBottomNavSelection()
         }
         view.findViewById<Button>(R.id.buttonDonateSpotlight).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, DonateFragment())
                 .addToBackStack(null)
                 .commit()
+            clearBottomNavSelection()
         }
 
-        // volunteer
+        // volunteer -> open screen and clear highlight
         view.findViewById<LinearLayout>(R.id.buttonVolunteerDashboard).setOnClickListener {
             val frag = if (isAdminMode) {
                 AdminVolunteerApplicationsFragment()
@@ -112,24 +117,22 @@ class DashboardFragment : Fragment() {
                 .replace(R.id.fragment_container, frag)
                 .addToBackStack(null)
                 .commit()
+            clearBottomNavSelection()
         }
         view.findViewById<Button>(R.id.buttonVolunteerSpotlight).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, VolunteerApplicationFragment())
                 .addToBackStack(null)
                 .commit()
+            clearBottomNavSelection()
         }
 
-        // events
+        // events tile -> switch tab so nav shows "Events"
         view.findViewById<LinearLayout>(R.id.buttonEventsDashboard).setOnClickListener {
-            val frag = EventsFragment().apply {
-                arguments = Bundle().apply { putBoolean("isAdminMode", isAdminMode) }
-            }
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, frag)
-                .addToBackStack(null)
-                .commit()
+            (activity as? MainActivity)?.selectTab(R.id.nav_notifications)
         }
+
+        // spotlight button -> event details (secondary) -> clear highlight
         spotlightEventButton?.setOnClickListener {
             spotlightEvent?.let { e ->
                 val frag = EventDetailsFragment().apply {
@@ -146,10 +149,11 @@ class DashboardFragment : Fragment() {
                     .replace(R.id.fragment_container, frag)
                     .addToBackStack(null)
                     .commit()
+                clearBottomNavSelection()
             } ?: Toast.makeText(requireContext(), "No upcoming event", Toast.LENGTH_SHORT).show()
         }
 
-        // testimonials
+        // testimonials -> secondary -> clear highlight
         view.findViewById<LinearLayout>(R.id.buttonTestimonialsDashboard).setOnClickListener {
             if (isAdminMode) {
                 val opened = openAnyFragment(
@@ -168,28 +172,27 @@ class DashboardFragment : Fragment() {
                     .addToBackStack(null)
                     .commit()
             }
+            clearBottomNavSelection()
         }
 
-        // about
+        // about -> top tab
         view.findViewById<LinearLayout>(R.id.buttonAboutDashboard).setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AboutUsFragment())
-                .addToBackStack(null)
-                .commit()
+            (activity as? MainActivity)?.selectTab(R.id.nav_location)
         }
 
-        // faq
+        // FAQ tile -> top tab
         view.findViewById<LinearLayout>(R.id.buttonUserDashboard).setOnClickListener {
-            startActivity(Intent(requireContext(), FaqActivity::class.java))
+            (activity as? MainActivity)?.selectTab(R.id.nav_profile)
         }
 
-        // admin link
-        adminLoginText.setOnClickListener {
+        // admin login/logout
+        val adminText = adminLoginText
+        adminText.setOnClickListener {
             if (isAdminMode) {
                 SessionManager.isAdmin = false
                 isAdminMode = false
-                welcomeText.visibility = View.GONE
-                adminLoginText.text = "Admin Login"
+                view.findViewById<TextView>(R.id.textWelcomeAdmin).visibility = View.GONE
+                adminText.text = "Admin Login"
 
                 textDonateLabel.text = "Donate"
                 textVolunteerLabel.text = "Volunteer"
@@ -204,15 +207,17 @@ class DashboardFragment : Fragment() {
                     .replace(R.id.fragment_container, AdminLoginFragment())
                     .addToBackStack(null)
                     .commit()
+                clearBottomNavSelection()
             }
         }
 
         // read more
         view.findViewById<Button>(R.id.buttonReadMoreNLBH)?.setOnClickListener {
             openPdfFromAssets("nlbh.pdf")
+            clearBottomNavSelection()
         }
 
-        // search routing
+        // search routing -> reflect tabs when applicable, otherwise clear
         val editSearch = view.findViewById<EditText>(R.id.editSearch)
         editSearch?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -220,8 +225,7 @@ class DashboardFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 val q = s?.toString()?.trim()?.lowercase(Locale.getDefault()) ?: return
                 if (q.length < 3) return
-
-                fun clear() = editSearch.setText("")
+                fun clearText() = editSearch.setText("")
 
                 when {
                     q.contains("donat") -> {
@@ -229,7 +233,8 @@ class DashboardFragment : Fragment() {
                             .replace(R.id.fragment_container, DonateFragment())
                             .addToBackStack(null)
                             .commit()
-                        clear()
+                        clearBottomNavSelection()
+                        clearText()
                     }
                     q.contains("volun") -> {
                         val frag = if (isAdminMode) {
@@ -241,28 +246,20 @@ class DashboardFragment : Fragment() {
                             .replace(R.id.fragment_container, frag)
                             .addToBackStack(null)
                             .commit()
-                        clear()
+                        clearBottomNavSelection()
+                        clearText()
                     }
                     q.contains("event") -> {
-                        val frag = EventsFragment().apply {
-                            arguments = Bundle().apply { putBoolean("isAdminMode", isAdminMode) }
-                        }
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, frag)
-                            .addToBackStack(null)
-                            .commit()
-                        clear()
+                        (activity as? MainActivity)?.selectTab(R.id.nav_notifications)
+                        clearText()
                     }
                     q.contains("faq") -> {
-                        startActivity(Intent(requireContext(), FaqActivity::class.java))
-                        clear()
+                        (activity as? MainActivity)?.selectTab(R.id.nav_profile)
+                        clearText()
                     }
                     q.contains("about") || q.contains("nlbh") -> {
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, AboutUsFragment())
-                            .addToBackStack(null)
-                            .commit()
-                        clear()
+                        (activity as? MainActivity)?.selectTab(R.id.nav_location)
+                        clearText()
                     }
                     q.contains("drop") || q.contains("map") || q.contains("direction") -> {
                         val opened = openAnyFragment(
@@ -274,7 +271,8 @@ class DashboardFragment : Fragment() {
                         if (!opened) {
                             Toast.makeText(requireContext(), "Drop-off screen not found", Toast.LENGTH_SHORT).show()
                         }
-                        clear()
+                        clearBottomNavSelection()
+                        clearText()
                     }
                     q.contains("wish") -> {
                         val opened = openAnyFragment(
@@ -285,7 +283,8 @@ class DashboardFragment : Fragment() {
                         if (!opened) {
                             Toast.makeText(requireContext(), "Wishlist screen not found", Toast.LENGTH_SHORT).show()
                         }
-                        clear()
+                        clearBottomNavSelection()
+                        clearText()
                     }
                     q.contains("testi") -> {
                         if (isAdminMode) {
@@ -305,41 +304,12 @@ class DashboardFragment : Fragment() {
                                 .addToBackStack(null)
                                 .commit()
                         }
-                        clear()
+                        clearBottomNavSelection()
+                        clearText()
                     }
                 }
             }
         })
-
-        // bottom nav
-        val bnv = view.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bnv.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> true
-                R.id.nav_location -> {
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, AboutUsFragment())
-                        .addToBackStack(null)
-                        .commit()
-                    true
-                }
-                R.id.nav_notifications -> {
-                    val frag = EventsFragment().apply {
-                        arguments = Bundle().apply { putBoolean("isAdminMode", isAdminMode) }
-                    }
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, frag)
-                        .addToBackStack(null)
-                        .commit()
-                    true
-                }
-                R.id.nav_profile -> {
-                    startActivity(Intent(requireContext(), FaqActivity::class.java))
-                    true
-                }
-                else -> false
-            }
-        }
     }
 
     private fun openAnyFragment(vararg fqcn: String): Boolean {
@@ -428,5 +398,13 @@ class DashboardFragment : Fragment() {
                 Toast.makeText(ctx, "Unable to open PDF", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    // uncheck all bottom nav items (allow none selected)
+    private fun clearBottomNavSelection() {
+        val bnv = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav) ?: return
+        val menu = bnv.menu
+        menu.setGroupCheckable(0, true, false)
+        for (i in 0 until menu.size()) menu.getItem(i).isChecked = false
     }
 }

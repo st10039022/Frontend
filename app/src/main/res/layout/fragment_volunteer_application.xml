@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2E2E2E"
+    android:background="@android:color/white"
     android:fillViewport="true"
     android:clipToPadding="false"
     android:paddingBottom="32dp"
@@ -211,7 +211,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Do you have any Experience with toddlers; if\nso, please specify?"
+                android:text="Do you have any Experience with toddlers; if
+so, please specify?"
                 android:textColor="#333333"
                 android:textSize="13sp"
                 android:layout_marginBottom="6dp" />
@@ -228,43 +229,7 @@
                 android:paddingTop="10dp"
                 android:textSize="13sp"
                 android:textColor="#333333"
-                android:layout_marginBottom="14dp" />
-
-            <!-- File Upload Field -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Please upload an image/scan of any form of\npersonal identification:"
-                android:textColor="#333333"
-                android:textSize="13sp"
-                android:layout_marginBottom="6dp" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:background="@drawable/input_field_background"
-                android:layout_marginBottom="20dp">
-
-                <TextView
-                    android:id="@+id/tv_selected_file"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:text="Upload Here"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:textColor="#999999"
-                    android:textSize="13sp"
-                    android:background="?android:attr/selectableItemBackground" />
-
-                <Button
-                    android:id="@+id/btn_upload_file"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:text=""
-                    android:textSize="0sp" />
-            </RelativeLayout>
+                android:layout_marginBottom="20dp" />
 
             <!-- Submit Button -->
             <Button
@@ -279,53 +244,10 @@
                 android:textAllCaps="false" />
         </LinearLayout>
 
-        <!-- Bottom Navigation -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal"
-            android:background="@android:color/white"
-            android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_home_bottom"
-                android:scaleType="center"
-                android:contentDescription="Home" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_search_bottom"
-                android:scaleType="center"
-                android:contentDescription="Search" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_notification_bottom"
-                android:scaleType="center"
-                android:contentDescription="Notifications" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_profile_bottom"
-                android:scaleType="center"
-                android:contentDescription="Profile" />
-        </LinearLayout>
-
         <!-- spacer to allow scrolling past the bottom -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="160dp" />
+            android:layout_height="32dp" />
 
     </LinearLayout>
 </ScrollView>
