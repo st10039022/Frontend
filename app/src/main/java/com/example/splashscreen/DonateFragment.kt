@@ -13,7 +13,7 @@ class DonateFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the correct layout (with 3 cards)
+        // Inflate the layout with 3 cards
         return inflater.inflate(R.layout.fragment_donate, container, false)
     }
 

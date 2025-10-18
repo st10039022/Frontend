@@ -31,7 +31,7 @@ class ApprovedVolunteersFragment : Fragment() {
         adapter = VolunteerApplicationAdapter(
             applications = listOf(),
             onApprove = {},                          // not used here
-            onReject = { app -> removeFromApproved(app) },  // used as "Remove"
+            onReject = { app -> removeFromApproved(app) },  // used as Remove
             showActions = false
         )
         recyclerView.adapter = adapter
@@ -56,7 +56,6 @@ class ApprovedVolunteersFragment : Fragment() {
     }
 
     private fun removeFromApproved(app: VolunteerApplication) {
-        // Change to "pending" or delete() if you prefer a different workflow.
         db.collection("volunteer_applications").document(app.id)
             .update("status", "removed")
             .addOnSuccessListener {

@@ -81,7 +81,7 @@ class AdminTestimonialsFragment : Fragment() {
         val etMessage = dialogView.findViewById<EditText>(R.id.etMessage)
         val btnSave = dialogView.findViewById<Button>(R.id.btnSave)
 
-        // Hide any legacy image controls if they exist in your layout; safe (won’t crash if missing)
+        // Hide any legacy image controls if they exist in layout
         hideIfExists(dialogView, "btnPickImages")
         hideIfExists(dialogView, "tvPickedCount")
         hideIfExists(dialogView, "imagesPreviewContainer")
@@ -118,7 +118,7 @@ class AdminTestimonialsFragment : Fragment() {
         val docRef = existing?.let { firestore.collection("testimonials").document(it.id) }
             ?: firestore.collection("testimonials").document()
 
-        // Keep existing images as-is; new ones have none
+        // Keep existing images as is
         val finalImages = existing?.images ?: emptyList()
 
         val data = mapOf(

@@ -132,7 +132,7 @@ class DashboardFragment : Fragment() {
             (activity as? MainActivity)?.selectTab(R.id.nav_notifications)
         }
 
-        // spotlight button -> event details (secondary) -> clear highlight
+        // spotlight button -> event details -> clear highlight
         spotlightEventButton?.setOnClickListener {
             spotlightEvent?.let { e ->
                 val frag = EventDetailsFragment().apply {
@@ -400,7 +400,7 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    // uncheck all bottom nav items (allow none selected)
+    // uncheck all bottom nav items
     private fun clearBottomNavSelection() {
         val bnv = activity?.findViewById<BottomNavigationView>(R.id.bottom_nav) ?: return
         val menu = bnv.menu
