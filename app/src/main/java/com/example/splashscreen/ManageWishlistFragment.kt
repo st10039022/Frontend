@@ -4,11 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,7 +45,6 @@ class ManageWishlistFragment : Fragment() {
         btnAdd.setOnClickListener { addItem() }
 
         loadWishlist()
-
         return view
     }
 
@@ -78,6 +73,10 @@ class ManageWishlistFragment : Fragment() {
     }
 
     private fun addItem() {
+        if (!SessionManager.isAdmin) {
+            Toast.makeText(requireContext(), "Admin only", Toast.LENGTH_SHORT).show()
+            return
+        }
         val name = inputProduct.text.toString().trim()
         val priority = spinnerPriority.selectedItem.toString().lowercase()
         if (name.isEmpty()) {
@@ -90,9 +89,10 @@ class ManageWishlistFragment : Fragment() {
     }
 
     private fun editItem(position: Int) {
+        if (!SessionManager.isAdmin) return
+
         val item = itemsList[position]
 
-        // Create a layout for the dialog
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_edit_wishlist_item, null)
 
@@ -101,17 +101,14 @@ class ManageWishlistFragment : Fragment() {
 
         editName.setText(item.productName)
 
-        // Set up spinner items
         val priorities = listOf("High", "Medium", "Low")
-        val adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, priorities)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerPriority.adapter = adapter
+        val spinAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, priorities)
+        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPriority.adapter = spinAdapter
 
-        // Set spinner to current priority
         val currentIndex = priorities.indexOfFirst { it.equals(item.priority, ignoreCase = true) }
         if (currentIndex != -1) spinnerPriority.setSelection(currentIndex)
 
-        // Build dialog
         val dialog = android.app.AlertDialog.Builder(requireContext())
             .setTitle("Edit Product")
             .setView(dialogView)
@@ -134,15 +131,19 @@ class ManageWishlistFragment : Fragment() {
     }
 
     private fun deleteItem(position: Int) {
+        if (!SessionManager.isAdmin) return
         itemsList.removeAt(position)
         saveToFirestore()
     }
 
     private fun saveToFirestore() {
-        val newList = itemsList.map {
-            mapOf("productName" to it.productName, "priority" to it.priority)
-        }
-        val data = mapOf("items" to newList)
+        if (!SessionManager.isAdmin) return
+
+        val newList = itemsList.map { mapOf("productName" to it.productName, "priority" to it.priority) }
+        val data = hashMapOf<String, Any>(
+            "items" to newList,
+            "_k" to AdminSecrets.ADMIN_KEY   // REQUIRED by Firestore rules
+        )
         docRef.set(data, SetOptions.merge())
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Wishlist updated successfully", Toast.LENGTH_SHORT).show()

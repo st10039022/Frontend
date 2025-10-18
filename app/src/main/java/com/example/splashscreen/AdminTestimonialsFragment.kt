@@ -13,7 +13,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
 
 class AdminTestimonialsFragment : Fragment() {
 
@@ -41,7 +40,7 @@ class AdminTestimonialsFragment : Fragment() {
             items = testimonials,
             isAdmin = SessionManager.isAdmin,
             onEdit = { t -> showAddEditDialog(t) },
-            onDelete = { t -> confirmAndDelete(t) }
+            onDelete = { t -> confirmAndSoftDelete(t) }
         )
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
@@ -59,17 +58,17 @@ class AdminTestimonialsFragment : Fragment() {
     }
 
     private fun loadTestimonials() {
+        // No orderBy here (avoids composite index). We sort client-side.
         listener = firestore.collection("testimonials")
-            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .whereEqualTo("isDeleted", false)
             .addSnapshotListener { snap, e ->
                 if (e != null) {
-                    Toast.makeText(requireContext(), "Error loading testimonials", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error loading: ${e.message}", Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
                 }
-                val list = snap?.documents?.map { d ->
-                    val t = d.toObject(Testimonial::class.java) ?: Testimonial()
-                    t.copy(id = d.id, createdAt = t.createdAt)
-                } ?: emptyList()
+                val list = (snap?.documents ?: emptyList()).map { d ->
+                    (d.toObject(Testimonial::class.java) ?: Testimonial()).copy(id = d.id)
+                }.sortedByDescending { it.createdAt.seconds } // newest first
                 adapter.update(list)
             }
     }
@@ -118,14 +117,16 @@ class AdminTestimonialsFragment : Fragment() {
         val docRef = existing?.let { firestore.collection("testimonials").document(it.id) }
             ?: firestore.collection("testimonials").document()
 
-        // Keep existing images as is
         val finalImages = existing?.images ?: emptyList()
 
+        // MUST include _k + isDeleted=false to pass your rules
         val data = mapOf(
             "familyName" to name,
             "message" to message,
             "images" to finalImages,
-            "createdAt" to (existing?.createdAt ?: Timestamp.now())
+            "createdAt" to (existing?.createdAt ?: Timestamp.now()),
+            "isDeleted" to false,
+            "_k" to AdminSecrets.ADMIN_KEY
         )
 
         docRef.set(data)
@@ -139,20 +140,26 @@ class AdminTestimonialsFragment : Fragment() {
             }
     }
 
-    private fun confirmAndDelete(t: Testimonial) {
+    private fun confirmAndSoftDelete(t: Testimonial) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete testimonial")
             .setMessage("Delete this testimonial?")
-            .setPositiveButton("Delete") { _, _ -> deleteTestimonial(t) }
+            .setPositiveButton("Delete") { _, _ -> softDeleteTestimonial(t) }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun deleteTestimonial(t: Testimonial) {
-        firestore.collection("testimonials").document(t.id).delete()
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show()
-            }
+    private fun softDeleteTestimonial(t: Testimonial) {
+        val data = mapOf(
+            "familyName" to t.familyName,
+            "message" to t.message,
+            "images" to t.images,
+            "createdAt" to t.createdAt,
+            "isDeleted" to true,
+            "_k" to AdminSecrets.ADMIN_KEY
+        )
+        firestore.collection("testimonials").document(t.id).set(data)
+            .addOnSuccessListener { Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show() }
             .addOnFailureListener { ex ->
                 Toast.makeText(requireContext(), "Failed to delete: ${ex.message}", Toast.LENGTH_SHORT).show()
             }

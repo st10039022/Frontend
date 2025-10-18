@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
 
 class TestimonialsFragment : Fragment() {
 
@@ -33,23 +32,20 @@ class TestimonialsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Back button
         view.findViewById<ImageView>(R.id.backButtonTestimonials).setOnClickListener {
             parentFragmentManager.popBackStack()
         }
     }
 
     private fun loadTestimonials() {
+        // No orderBy to avoid composite index; sort client-side.
         listener = firestore.collection("testimonials")
-            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .whereEqualTo("isDeleted", false)
             .addSnapshotListener { snap, e ->
-                if (e != null) return@addSnapshotListener
-                if (snap == null) return@addSnapshotListener
+                if (e != null || snap == null) return@addSnapshotListener
                 val list = snap.documents.map { doc ->
-                    val t = doc.toObject(Testimonial::class.java)!!
-                    t.copy(id = doc.id)
-                }
+                    (doc.toObject(Testimonial::class.java) ?: Testimonial()).copy(id = doc.id)
+                }.sortedByDescending { it.createdAt.seconds }
                 adapter.update(list)
             }
     }

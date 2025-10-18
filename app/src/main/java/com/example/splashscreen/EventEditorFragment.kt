@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -36,9 +37,7 @@ class EventEditorFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_event_editor, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_event_editor, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -54,9 +53,7 @@ class EventEditorFragment : Fragment() {
         tvEnd = view.findViewById(R.id.tv_event_end)
         btnSave = view.findViewById(R.id.btn_save_event)
 
-        back.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
-        }
+        back.setOnClickListener { parentFragmentManager.popBackStack() }
 
         titleHeader.text = if (eventId == null) "Create Event" else "Edit Event"
 
@@ -93,7 +90,8 @@ class EventEditorFragment : Fragment() {
                     description = d.getString("description") ?: "",
                     dateMillis = d.getLong("dateMillis") ?: 0L,
                     startTime = d.getString("startTime") ?: "",
-                    endTime = d.getString("endTime") ?: ""
+                    endTime = d.getString("endTime") ?: "",
+                    isDeleted = d.getBoolean("isDeleted") ?: false
                 )
                 etName.setText(e.name)
                 etDesc.setText(e.description)
@@ -132,7 +130,6 @@ class EventEditorFragment : Fragment() {
         val cal = Calendar.getInstance()
         val h = cal.get(Calendar.HOUR_OF_DAY)
         val min = cal.get(Calendar.MINUTE)
-        // 12-hour style picker (set is24HourView=false), we’ll convert to 24h for storage
         TimePickerDialog(requireContext(), { _, hourOfDay, minute ->
             onPicked(hourOfDay, minute)
         }, h, min, false).show()
@@ -149,7 +146,7 @@ class EventEditorFragment : Fragment() {
             return
         }
 
-        // Validate time order: end after start
+        // Validate time order
         val startMin = toMinutes(startTime24)
         val endMin = toMinutes(endTime24)
         if (endMin <= startMin) {
@@ -157,39 +154,30 @@ class EventEditorFragment : Fragment() {
             return
         }
 
+        val id = eventId ?: db.collection("events").document().id
+
         val data = mapOf(
+            "id" to id,
             "name" to name,
             "description" to desc,
             "dateMillis" to selectedDateMillis,
             "startTime" to startTime24,
-            "endTime" to endTime24
+            "endTime" to endTime24,
+            "isDeleted" to false,
+            "_k" to AdminSecrets.ADMIN_KEY
         )
 
-        val id = eventId
-        if (id == null) {
-            // Create
-            val ref = db.collection("events").document()
-            val withId = data + ("id" to ref.id)
-            ref.set(withId)
-                .addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Event created", Toast.LENGTH_SHORT).show()
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(requireContext(), "Failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                }
-        } else {
-            // Update
-            db.collection("events").document(id)
-                .update(data + ("id" to id))
-                .addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Event updated", Toast.LENGTH_SHORT).show()
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(requireContext(), "Failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                }
-        }
+        db.collection("events").document(id)
+            .set(data)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), if (eventId == null) "Event created" else "Event updated", Toast.LENGTH_SHORT).show()
+                // tell EventsFragment to refresh, then pop back to it
+                parentFragmentManager.setFragmentResult("events_changed", bundleOf("refresh" to true))
+                parentFragmentManager.popBackStack()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
     }
 
     // ---------- Formatting helpers ----------
@@ -207,13 +195,11 @@ class EventEditorFragment : Fragment() {
         return SimpleDateFormat("hh:mm a", Locale.getDefault()).format(cal.time)
     }
 
-    private fun toDisplay(hhmm24: String): String {
-        return try {
-            val p = SimpleDateFormat("HH:mm", Locale.getDefault())
-            val d = p.parse(hhmm24)
-            SimpleDateFormat("hh:mm a", Locale.getDefault()).format(d!!)
-        } catch (_: Exception) { hhmm24 }
-    }
+    private fun toDisplay(hhmm24: String): String = try {
+        val p = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val d = p.parse(hhmm24)
+        SimpleDateFormat("hh:mm a", Locale.getDefault()).format(d!!)
+    } catch (_: Exception) { hhmm24 }
 
     private fun toMinutes(hhmm24: String): Int {
         val parts = hhmm24.split(":")

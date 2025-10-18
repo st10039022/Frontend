@@ -7,15 +7,12 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -37,6 +34,8 @@ class DashboardFragment : Fragment() {
     private lateinit var textTestimonialsLabel: TextView
     private lateinit var textAboutLabel: TextView
     private lateinit var textFaqLabel: TextView
+
+    private var eventsListener: ListenerRegistration? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,7 +65,11 @@ class DashboardFragment : Fragment() {
         // hide local bottom nav if present (prevents double nav)
         view.findViewById<BottomNavigationView?>(R.id.bottomNavigationView)?.visibility = View.GONE
 
-        loadSpotlightEvent()
+        // Live spotlight (and also refresh when Events editor reports changes)
+        startSpotlightListener()
+        parentFragmentManager.setFragmentResultListener("events_changed", viewLifecycleOwner) { _, _ ->
+            restartSpotlightListener() // ensure fresh query after create/update
+        }
 
         if (isAdminMode) {
             welcomeText.visibility = View.VISIBLE
@@ -90,7 +93,7 @@ class DashboardFragment : Fragment() {
             textFaqLabel.text = "FAQ"
         }
 
-        // donate -> open screen and clear bottom nav highlight
+        // donate
         view.findViewById<LinearLayout>(R.id.buttonDonateDashboard).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, DonateFragment())
@@ -106,13 +109,9 @@ class DashboardFragment : Fragment() {
             clearBottomNavSelection()
         }
 
-        // volunteer -> open screen and clear highlight
+        // volunteer
         view.findViewById<LinearLayout>(R.id.buttonVolunteerDashboard).setOnClickListener {
-            val frag = if (isAdminMode) {
-                AdminVolunteerApplicationsFragment()
-            } else {
-                VolunteerApplicationFragment()
-            }
+            val frag = if (isAdminMode) AdminVolunteerApplicationsFragment() else VolunteerApplicationFragment()
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, frag)
                 .addToBackStack(null)
@@ -132,7 +131,7 @@ class DashboardFragment : Fragment() {
             (activity as? MainActivity)?.selectTab(R.id.nav_notifications)
         }
 
-        // spotlight button -> event details -> clear highlight
+        // spotlight button -> event details
         spotlightEventButton?.setOnClickListener {
             spotlightEvent?.let { e ->
                 val frag = EventDetailsFragment().apply {
@@ -153,7 +152,7 @@ class DashboardFragment : Fragment() {
             } ?: Toast.makeText(requireContext(), "No upcoming event", Toast.LENGTH_SHORT).show()
         }
 
-        // testimonials -> secondary -> clear highlight
+        // testimonials
         view.findViewById<LinearLayout>(R.id.buttonTestimonialsDashboard).setOnClickListener {
             if (isAdminMode) {
                 val opened = openAnyFragment(
@@ -175,17 +174,17 @@ class DashboardFragment : Fragment() {
             clearBottomNavSelection()
         }
 
-        // about -> top tab
+        // about
         view.findViewById<LinearLayout>(R.id.buttonAboutDashboard).setOnClickListener {
             (activity as? MainActivity)?.selectTab(R.id.nav_location)
         }
 
-        // FAQ tile -> top tab
+        // FAQ
         view.findViewById<LinearLayout>(R.id.buttonUserDashboard).setOnClickListener {
             (activity as? MainActivity)?.selectTab(R.id.nav_profile)
         }
 
-        // admin login/logout
+        // admin login/logout toggle
         val adminText = adminLoginText
         adminText.setOnClickListener {
             if (isAdminMode) {
@@ -217,7 +216,7 @@ class DashboardFragment : Fragment() {
             clearBottomNavSelection()
         }
 
-        // search routing -> reflect tabs when applicable, otherwise clear
+        // search routing
         val editSearch = view.findViewById<EditText>(R.id.editSearch)
         editSearch?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -233,21 +232,15 @@ class DashboardFragment : Fragment() {
                             .replace(R.id.fragment_container, DonateFragment())
                             .addToBackStack(null)
                             .commit()
-                        clearBottomNavSelection()
-                        clearText()
+                        clearBottomNavSelection(); clearText()
                     }
                     q.contains("volun") -> {
-                        val frag = if (isAdminMode) {
-                            AdminVolunteerApplicationsFragment()
-                        } else {
-                            VolunteerApplicationFragment()
-                        }
+                        val frag = if (isAdminMode) AdminVolunteerApplicationsFragment() else VolunteerApplicationFragment()
                         parentFragmentManager.beginTransaction()
                             .replace(R.id.fragment_container, frag)
                             .addToBackStack(null)
                             .commit()
-                        clearBottomNavSelection()
-                        clearText()
+                        clearBottomNavSelection(); clearText()
                     }
                     q.contains("event") -> {
                         (activity as? MainActivity)?.selectTab(R.id.nav_notifications)
@@ -268,11 +261,8 @@ class DashboardFragment : Fragment() {
                             "com.example.splashscreen.DropoffFragment",
                             "com.example.splashscreen.DropOffZoneFragment"
                         )
-                        if (!opened) {
-                            Toast.makeText(requireContext(), "Drop-off screen not found", Toast.LENGTH_SHORT).show()
-                        }
-                        clearBottomNavSelection()
-                        clearText()
+                        if (!opened) Toast.makeText(requireContext(), "Drop-off screen not found", Toast.LENGTH_SHORT).show()
+                        clearBottomNavSelection(); clearText()
                     }
                     q.contains("wish") -> {
                         val opened = openAnyFragment(
@@ -280,11 +270,8 @@ class DashboardFragment : Fragment() {
                             "com.example.splashscreen.ManageWishlistFragment",
                             "com.example.splashscreen.PublicWishlistFragment"
                         )
-                        if (!opened) {
-                            Toast.makeText(requireContext(), "Wishlist screen not found", Toast.LENGTH_SHORT).show()
-                        }
-                        clearBottomNavSelection()
-                        clearText()
+                        if (!opened) Toast.makeText(requireContext(), "Wishlist screen not found", Toast.LENGTH_SHORT).show()
+                        clearBottomNavSelection(); clearText()
                     }
                     q.contains("testi") -> {
                         if (isAdminMode) {
@@ -304,12 +291,30 @@ class DashboardFragment : Fragment() {
                                 .addToBackStack(null)
                                 .commit()
                         }
-                        clearBottomNavSelection()
-                        clearText()
+                        clearBottomNavSelection(); clearText()
                     }
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // if admin status changed, update labels
+        val newAdmin = SessionManager.isAdmin
+        if (newAdmin != isAdminMode) {
+            isAdminMode = newAdmin
+            view?.findViewById<TextView>(R.id.textWelcomeAdmin)?.visibility =
+                if (isAdminMode) View.VISIBLE else View.GONE
+        }
+        // ensure spotlight is in sync after coming back
+        restartSpotlightListener()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        eventsListener?.remove()
+        eventsListener = null
     }
 
     private fun openAnyFragment(vararg fqcn: String): Boolean {
@@ -327,7 +332,9 @@ class DashboardFragment : Fragment() {
         return false
     }
 
-    private fun loadSpotlightEvent() {
+    // --- Spotlight: live upcoming event, excluding soft-deleted ---
+    private fun startSpotlightListener() {
+        eventsListener?.remove()
         val today = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -335,34 +342,59 @@ class DashboardFragment : Fragment() {
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
 
-        db.collection("events")
+        // Single-field index (dateMillis) → no composite index needed
+        eventsListener = db.collection("events")
             .whereGreaterThanOrEqualTo("dateMillis", today)
-            .get()
-            .addOnSuccessListener { snap ->
-                val events = snap.documents.map { d ->
-                    Event(
-                        id = d.id,
-                        name = d.getString("name") ?: "",
-                        description = d.getString("description") ?: "",
-                        dateMillis = d.getLong("dateMillis") ?: 0L,
-                        startTime = d.getString("startTime") ?: "",
-                        endTime = d.getString("endTime") ?: ""
-                    )
-                }.sortedWith(compareBy<Event> { it.dateMillis }.thenBy { it.startTime })
-
-                if (events.isNotEmpty()) {
-                    spotlightEvent = events.first()
-                    val fmt = SimpleDateFormat("EEE, dd MMM", Locale.getDefault())
-                    spotlightEventTitle?.text = spotlightEvent!!.name
-                    spotlightEventSubtitle?.text =
-                        "${fmt.format(Date(spotlightEvent!!.dateMillis))} • ${spotlightEvent!!.startTime} - ${spotlightEvent!!.endTime}"
-                } else {
+            .orderBy("dateMillis")
+            .limit(10)
+            .addSnapshotListener { snap, e ->
+                if (e != null || snap == null) {
                     spotlightEventTitle?.text = "No upcoming events"
                     spotlightEventSubtitle?.text = ""
                     spotlightEvent = null
+                    return@addSnapshotListener
+                }
+
+                val next = snap.documents
+                    .mapNotNull { d ->
+                        if (d.getBoolean("isDeleted") == true) null else Event(
+                            id = d.getString("id") ?: d.id,
+                            name = d.getString("name") ?: "",
+                            description = d.getString("description") ?: "",
+                            dateMillis = d.getLong("dateMillis") ?: 0L,
+                            startTime = d.getString("startTime") ?: "",
+                            endTime = d.getString("endTime") ?: "",
+                            isDeleted = false
+                        )
+                    }
+                    .sortedWith(compareBy<Event> { it.dateMillis }.thenBy { it.startTime })
+                    .firstOrNull()
+
+                spotlightEvent = next
+                if (next == null) {
+                    spotlightEventTitle?.text = "No upcoming events"
+                    spotlightEventSubtitle?.text = ""
+                } else {
+                    val dateFmt = SimpleDateFormat("EEE, dd MMM", Locale.getDefault())
+                    val startDisp = toDisplay(next.startTime)
+                    val endDisp = toDisplay(next.endTime)
+                    spotlightEventTitle?.text = next.name
+                    spotlightEventSubtitle?.text =
+                        "${dateFmt.format(Date(next.dateMillis))} • $startDisp - $endDisp"
                 }
             }
     }
+
+    private fun restartSpotlightListener() {
+        // re-attach to reflect any rule/clock changes and recalc "today"
+        startSpotlightListener()
+    }
+
+    private fun toDisplay(hhmm24: String): String = try {
+        val p = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val d = p.parse(hhmm24)
+        SimpleDateFormat("hh:mm a", Locale.getDefault()).format(d!!)
+    } catch (_: Exception) { hhmm24 }
 
     private fun openPdfFromAssets(assetName: String) {
         val ctx = requireContext()

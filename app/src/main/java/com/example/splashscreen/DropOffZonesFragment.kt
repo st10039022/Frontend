@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 class DropOffZonesFragment : Fragment() {
 
@@ -47,12 +48,9 @@ class DropOffZonesFragment : Fragment() {
             items = itemsList,
             onEdit = { position -> editItem(position) },
             onDelete = { position -> deleteItem(position) }
-        ).apply {
-        }
-
+        )
         recycler.adapter = adapter
 
-        // Show admin controls only if admin
         if (SessionManager.isAdmin) {
             adminControls.visibility = View.VISIBLE
             btnAdd.setOnClickListener { addItem() }
@@ -62,7 +60,6 @@ class DropOffZonesFragment : Fragment() {
 
         loadWishlist()
         setupMapAndButtons(view)
-
         return view
     }
 
@@ -108,22 +105,22 @@ class DropOffZonesFragment : Fragment() {
     }
 
     private fun addItem() {
+        if (!SessionManager.isAdmin) return
         val name = inputProduct.text.toString().trim()
         val priority = spinnerPriority.selectedItem.toString().lowercase()
-
         if (name.isEmpty()) {
             Toast.makeText(requireContext(), "Enter a product name", Toast.LENGTH_SHORT).show()
             return
         }
-
         itemsList.add(ProductItem(name, priority))
         saveToFirestore()
         inputProduct.text.clear()
     }
 
     private fun editItem(position: Int) {
-        val item = itemsList[position]
+        if (!SessionManager.isAdmin) return
 
+        val item = itemsList[position]
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_edit_wishlist_item, null)
 
@@ -133,9 +130,9 @@ class DropOffZonesFragment : Fragment() {
         editName.setText(item.productName)
 
         val priorities = listOf("High", "Medium", "Low")
-        val adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, priorities)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerPriority.adapter = adapter
+        val spinAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, priorities)
+        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPriority.adapter = spinAdapter
 
         val currentIndex = priorities.indexOfFirst { it.equals(item.priority, ignoreCase = true) }
         if (currentIndex != -1) spinnerPriority.setSelection(currentIndex)
@@ -146,12 +143,10 @@ class DropOffZonesFragment : Fragment() {
             .setPositiveButton("Save") { _, _ ->
                 val newName = editName.text.toString().trim()
                 val newPriority = spinnerPriority.selectedItem.toString().lowercase()
-
                 if (newName.isEmpty()) {
                     Toast.makeText(requireContext(), "Product name cannot be empty", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
-
                 itemsList[position] = ProductItem(newName, newPriority)
                 saveToFirestore()
             }
@@ -161,7 +156,6 @@ class DropOffZonesFragment : Fragment() {
         dialog.show()
     }
 
-
     private fun deleteItem(position: Int) {
         if (!SessionManager.isAdmin) return
         itemsList.removeAt(position)
@@ -169,19 +163,16 @@ class DropOffZonesFragment : Fragment() {
     }
 
     private fun saveToFirestore() {
-        val newList = itemsList.map {
-            mapOf("productName" to it.productName, "priority" to it.priority)
-        }
+        if (!SessionManager.isAdmin) return
 
-        val data = mapOf("items" to newList)
+        val newList = itemsList.map { mapOf("productName" to it.productName, "priority" to it.priority) }
+        val data = mapOf(
+            "items" to newList,
+            "_k" to AdminSecrets.ADMIN_KEY   // <-- required by Firestore rules
+        )
 
-        // Use set() with merge instead of update() for reliability
-        docRef.set(data, com.google.firebase.firestore.SetOptions.merge())
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Wishlist updated", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { ex ->
-                Toast.makeText(requireContext(), "Failed to save: ${ex.message}", Toast.LENGTH_LONG).show()
-            }
+        docRef.set(data, SetOptions.merge())
+            .addOnSuccessListener { Toast.makeText(requireContext(), "Wishlist updated", Toast.LENGTH_SHORT).show() }
+            .addOnFailureListener { ex -> Toast.makeText(requireContext(), "Failed to save: ${ex.message}", Toast.LENGTH_LONG).show() }
     }
 }

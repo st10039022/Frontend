@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
 class RejectedVolunteersFragment : Fragment() {
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: VolunteerApplicationAdapter
     private val db = FirebaseFirestore.getInstance()
@@ -28,10 +29,11 @@ class RejectedVolunteersFragment : Fragment() {
         recyclerView = view.findViewById(R.id.rv_rejected_volunteers)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+        // Reuse adapter in compact mode; use red button as "Remove application"
         adapter = VolunteerApplicationAdapter(
             applications = listOf(),
-            onApprove = {},                            // not used here
-            onReject = { app -> removeRejected(app) }, // small red button acts as Remove
+            onApprove = {},                                  // no approve here
+            onReject = { app -> removeRejected(app) },       // set status -> removed
             showActions = false
         )
         recyclerView.adapter = adapter
@@ -44,12 +46,11 @@ class RejectedVolunteersFragment : Fragment() {
             .whereEqualTo("status", "rejected")
             .addSnapshotListener { snapshots, error ->
                 if (error != null) {
-                    Toast.makeText(requireContext(), "Error loading volunteers", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error loading rejected", Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
                 }
                 val apps = snapshots?.documents?.mapNotNull { doc ->
-                    val app = doc.toObject(VolunteerApplication::class.java)
-                    app?.copy(id = doc.id)
+                    doc.toObject(VolunteerApplication::class.java)?.copy(id = doc.id)
                 } ?: emptyList()
                 adapter.updateData(apps)
             }
@@ -57,12 +58,17 @@ class RejectedVolunteersFragment : Fragment() {
 
     private fun removeRejected(app: VolunteerApplication) {
         db.collection("volunteer_applications").document(app.id)
-            .update("status", "removed")
+            .update(
+                mapOf(
+                    "status" to "removed",
+                    "_k" to AdminSecrets.ADMIN_KEY
+                )
+            )
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Removed from rejected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Application removed", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to remove", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Failed to remove: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

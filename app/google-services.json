@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "426696129533",
-    "project_id": "newlifebabyhome-46f4c",
-    "storage_bucket": "newlifebabyhome-46f4c.firebasestorage.app"
+    "project_number": "691287027427",
+    "project_id": "nlbh-app",
+    "storage_bucket": "nlbh-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:426696129533:android:3488fc3c5a17127e9db794",
+        "mobilesdk_app_id": "1:691287027427:android:ef506e822d30327a549fd6",
         "android_client_info": {
           "package_name": "com.example.splashscreen"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDsqOTwLnBHeFb3VmmrFgyRT6uRDvEzCPs"
+          "current_key": "AIzaSyClG5ioSs2z3Sv1HgW9O1K3g1uNAWgqWLs"
         }
       ],
       "services": {

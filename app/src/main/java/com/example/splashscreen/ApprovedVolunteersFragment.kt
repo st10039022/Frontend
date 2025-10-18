@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
 class ApprovedVolunteersFragment : Fragment() {
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: VolunteerApplicationAdapter
     private val db = FirebaseFirestore.getInstance()
@@ -30,9 +31,9 @@ class ApprovedVolunteersFragment : Fragment() {
 
         adapter = VolunteerApplicationAdapter(
             applications = listOf(),
-            onApprove = {},                          // not used here
-            onReject = { app -> removeFromApproved(app) },  // used as Remove
-            showActions = false
+            onApprove = {},                                  // not used on approved list
+            onReject = { app -> removeFromApproved(app) },   // use red button as "Remove volunteer"
+            showActions = false                              // compact row, copy email visible
         )
         recyclerView.adapter = adapter
 
@@ -48,8 +49,7 @@ class ApprovedVolunteersFragment : Fragment() {
                     return@addSnapshotListener
                 }
                 val apps = snapshots?.documents?.mapNotNull { doc ->
-                    val app = doc.toObject(VolunteerApplication::class.java)
-                    app?.copy(id = doc.id)
+                    doc.toObject(VolunteerApplication::class.java)?.copy(id = doc.id)
                 } ?: emptyList()
                 adapter.updateData(apps)
             }
@@ -57,12 +57,17 @@ class ApprovedVolunteersFragment : Fragment() {
 
     private fun removeFromApproved(app: VolunteerApplication) {
         db.collection("volunteer_applications").document(app.id)
-            .update("status", "removed")
+            .update(
+                mapOf(
+                    "status" to "removed",
+                    "_k" to AdminSecrets.ADMIN_KEY
+                )
+            )
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Removed from approved", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to remove", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Failed to remove: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

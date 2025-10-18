@@ -11,35 +11,30 @@ import androidx.fragment.app.Fragment
 
 class AdminLoginFragment : Fragment() {
 
-    private val adminPassword = "admin123" // Hardcoded admin password
+    private val ADMIN_PASSWORD = "admin123" // hardcoded only
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_admin_login, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_admin_login, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val etPassword = view.findViewById<EditText>(R.id.et_admin_password)
+        val btnLogin   = view.findViewById<Button>(R.id.btn_admin_login)
 
-        val passwordEditText = view.findViewById<EditText>(R.id.et_admin_password)
-        val loginButton = view.findViewById<Button>(R.id.btn_admin_login)
+        btnLogin.setOnClickListener {
+            val entered = etPassword.text?.toString()?.trim() ?: ""
+            if (entered.isEmpty()) {
+                Toast.makeText(requireContext(), "Enter admin password", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-        loginButton.setOnClickListener {
-            val enteredPassword = passwordEditText.text.toString()
-
-            if (enteredPassword == adminPassword) {
-                // mark session as admin
+            if (entered == ADMIN_PASSWORD) {
                 SessionManager.isAdmin = true
-
-                // replace with DashboardFragment (dashboard will read SessionManager)
-                val frag = DashboardFragment()
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, frag)
-                    .commit()
-
                 Toast.makeText(requireContext(), "Welcome Admin!", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, DashboardFragment())
+                    .commit()
             } else {
                 Toast.makeText(requireContext(), "Incorrect password", Toast.LENGTH_SHORT).show()
             }

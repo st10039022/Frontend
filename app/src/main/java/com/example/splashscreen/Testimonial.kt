@@ -7,5 +7,6 @@ data class Testimonial(
     val familyName: String = "",
     val images: List<String> = emptyList(), // download URLs
     val message: String = "",
-    val createdAt: Timestamp = Timestamp.now()
+    val createdAt: Timestamp = Timestamp.now(),
+    val isDeleted: Boolean = false
 )

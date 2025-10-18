@@ -77,6 +77,12 @@ class EventsFragment : Fragment() {
         btnAddEvent.visibility = if (isAdminMode) View.VISIBLE else View.GONE
         btnAddEvent.setOnClickListener { openEditor(null) } // null => create
 
+        // Listen for editor result to refresh immediately after save
+        parentFragmentManager.setFragmentResultListener("events_changed", viewLifecycleOwner) { _, _ ->
+            loadDay(currentSelectedDayStart)
+            loadUpcoming(currentSelectedDayStart)
+        }
+
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             currentSelectedDayStart = getStartOfDayMillis(year, month, dayOfMonth)
             updateSelectedDateText(currentSelectedDayStart)
@@ -99,7 +105,6 @@ class EventsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // admin status might have changed after login/logout; refresh UI + adapters
         val newAdmin = SessionManager.isAdmin
         if (newAdmin != isAdminMode) {
             isAdminMode = newAdmin
@@ -147,7 +152,18 @@ class EventsFragment : Fragment() {
             .setTitle("Delete event")
             .setMessage("Are you sure you want to delete “${e.name}”?")
             .setPositiveButton("Delete") { d, _ ->
-                FirebaseFirestore.getInstance().collection("events").document(e.id).delete()
+                // Soft delete: include _k; rules block hard deletes
+                val payload = mapOf(
+                    "id" to e.id,
+                    "name" to e.name,
+                    "description" to e.description,
+                    "dateMillis" to e.dateMillis,
+                    "startTime" to e.startTime,
+                    "endTime" to e.endTime,
+                    "isDeleted" to true,
+                    "_k" to AdminSecrets.ADMIN_KEY
+                )
+                FirebaseFirestore.getInstance().collection("events").document(e.id).set(payload)
                     .addOnSuccessListener {
                         Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show()
                         loadDay(currentSelectedDayStart)
@@ -174,14 +190,16 @@ class EventsFragment : Fragment() {
             .whereEqualTo("dateMillis", dayStartMillis)
             .get()
             .addOnSuccessListener { snap ->
-                val events = snap.documents.map { d ->
-                    Event(
+                val events = snap.documents.mapNotNull { d ->
+                    val isDeleted = d.getBoolean("isDeleted") ?: false
+                    if (isDeleted) null else Event(
                         id = d.getString("id") ?: d.id,
                         name = d.getString("name") ?: "",
                         description = d.getString("description") ?: "",
                         dateMillis = d.getLong("dateMillis") ?: 0L,
                         startTime = d.getString("startTime") ?: "",
-                        endTime = d.getString("endTime") ?: ""
+                        endTime = d.getString("endTime") ?: "",
+                        isDeleted = false
                     )
                 }.sortedWith(compareBy<Event> { it.startTime }.thenBy { it.name })
                 adapter.update(events)
@@ -193,16 +211,20 @@ class EventsFragment : Fragment() {
         if (upcomingRecycler == null || upcomingAdapter == null) return
         db.collection("events")
             .whereGreaterThanOrEqualTo("dateMillis", fromMillis)
+            .orderBy("dateMillis") // safe single-field index
+            .limit(20)
             .get()
             .addOnSuccessListener { snap ->
-                val events = snap.documents.map { d ->
-                    Event(
+                val events = snap.documents.mapNotNull { d ->
+                    val isDeleted = d.getBoolean("isDeleted") ?: false
+                    if (isDeleted) null else Event(
                         id = d.getString("id") ?: d.id,
                         name = d.getString("name") ?: "",
                         description = d.getString("description") ?: "",
                         dateMillis = d.getLong("dateMillis") ?: 0L,
                         startTime = d.getString("startTime") ?: "",
-                        endTime = d.getString("endTime") ?: ""
+                        endTime = d.getString("endTime") ?: "",
+                        isDeleted = false
                     )
                 }.sortedWith(compareBy<Event> { it.dateMillis }.thenBy { it.startTime })
                 upcomingAdapter?.update(events)

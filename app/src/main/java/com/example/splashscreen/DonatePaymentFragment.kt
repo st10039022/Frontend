@@ -16,6 +16,7 @@ import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.SetOptions
 import kotlin.math.*
 
 class DonatePaymentFragment : Fragment() {
@@ -74,12 +75,12 @@ class DonatePaymentFragment : Fragment() {
     private val ANIM_MS = 900L
     private val CHANGE_EPS = 0.25
 
-    //visual baseline boost
+    // visual baseline boost
     private val BASELINE_VIRTUAL_DONATION = 1000.0      // R 1,000
     private val BASELINE_MAX_BOOST_PCT = 25.0           // don’t boost more than 25% of the height
 
-    //fill when goal reached
-    private val GOAL_OVERFILL_MULTIPLIER = 1.5f         // ~1.5x higher
+    // fill when goal reached
+    private val GOAL_OVERFILL_MULTIPLIER = 1.3f         // ~1.3x higher
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,7 +101,7 @@ class DonatePaymentFragment : Fragment() {
         milkSurface = view.findViewById(R.id.milkSurface)
         editButton = view.findViewById(R.id.btnEditDonation)
 
-        //milk
+        // milk
         milkSolid.setBackgroundColor(Color.WHITE)
 
         // Bottom-align both children inside milkClip
@@ -152,7 +153,7 @@ class DonatePaymentFragment : Fragment() {
 
         view.findViewById<Button>(R.id.btnZapper)?.setOnClickListener { showQrDialog(R.drawable.zapper, "Zapper QR") }
 
-        //EFT copyable dialog
+        // EFT copyable dialog
         view.findViewById<Button>(R.id.btnEFT)?.apply {
             setOnClickListener { showEftDetailsDialog() }
             setOnLongClickListener {
@@ -226,14 +227,28 @@ class DonatePaymentFragment : Fragment() {
     }
 
     private fun saveDonationProgress(raised: Double, goal: Double) {
-        val data = mapOf("totalRaised" to raised, "monthlyGoal" to goal)
+        // Optimistic local update so UI feels instant
+        totalRaised = raised
+        goalAmount = goal
+        updateUI(animate = true)
+        cacheCurrent()
+
+        // IMPORTANT: include the admin key required by your Firestore rules
+        val data = hashMapOf(
+            "totalRaised" to raised,
+            "monthlyGoal" to goal,
+            "_k" to AdminSecrets.ADMIN_KEY
+        )
         db.collection("donationProgress").document("current")
-            .set(data)
+            .set(data, SetOptions.merge())
             .addOnSuccessListener {
                 Snackbar.make(requireView(), "Updated successfully", Snackbar.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
-                Snackbar.make(requireView(), "Failed to update", Snackbar.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Snackbar.make(requireView(), "Failed to update: ${e.message}", Snackbar.LENGTH_LONG).show()
+                // revert to last server-known values on failure by forcing a UI refresh from cache
+                loadCached()
+                updateUI(animate = true)
             }
     }
 
@@ -285,7 +300,7 @@ class DonatePaymentFragment : Fragment() {
         }
     }
 
-    //position the milk clip to the bottle’s inner cavity
+    // position the milk clip to the bottle’s inner cavity
     private fun positionMilkClip(applyInstant: Boolean) {
         if (imageBottle.width == 0 || imageBottle.height == 0 || imageBottle.drawable == null) return
 
@@ -480,7 +495,7 @@ class DonatePaymentFragment : Fragment() {
         b.show()
     }
 
-    //EFT copyable dialog + helper
+    // EFT copyable dialog + helper
 
     private fun showEftDetailsDialog() {
         val details = """
@@ -495,7 +510,8 @@ class DonatePaymentFragment : Fragment() {
         // Selectable text so users can copy specific lines too
         val tv = TextView(requireContext()).apply {
             text = details
-            setTextIsSelectable(true)
+            setTextIsSelectable(true
+            )
             setPadding(dpInt(16f), dpInt(12f), dpInt(16f), dpInt(8f))
             textSize = 16f
         }
@@ -529,8 +545,7 @@ class DonatePaymentFragment : Fragment() {
         clipboard.setPrimaryClip(ClipData.newPlainText(label, text))
     }
 
-
-    //ripple renderer
+    // ripple renderer
     private class RippleWaveView(context: Context) : View(context) {
         private val milkPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL

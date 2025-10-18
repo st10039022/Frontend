@@ -23,9 +23,7 @@ class AdminVolunteerApplicationsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_admin_volunteer_applications, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_admin_volunteer_applications, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,13 +31,18 @@ class AdminVolunteerApplicationsFragment : Fragment() {
         val buttonViewApproved = view.findViewById<Button>(R.id.button_view_approved)
         val buttonViewRejected = view.findViewById<Button>(R.id.button_view_rejected)
         val emptyState = view.findViewById<TextView>(R.id.tv_empty_state)
+
         recyclerView = view.findViewById(R.id.rv_pending_applications)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = VolunteerApplicationAdapter(listOf(), this::approveApplication, this::rejectApplication)
+        adapter = VolunteerApplicationAdapter(
+            applications = listOf(),
+            onApprove = { app -> approveApplication(app) },
+            onReject = { app -> rejectApplication(app) },
+            showActions = true // pending screen shows Approve/Reject
+        )
         recyclerView.adapter = adapter
 
-        // Go to approved volunteers
         buttonViewApproved.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, ApprovedVolunteersFragment())
@@ -47,7 +50,6 @@ class AdminVolunteerApplicationsFragment : Fragment() {
                 .commit()
         }
 
-        // Go to rejected volunteers
         buttonViewRejected.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, RejectedVolunteersFragment())
@@ -55,7 +57,6 @@ class AdminVolunteerApplicationsFragment : Fragment() {
                 .commit()
         }
 
-        // Listen for pending applications
         listenForPendingApplications(emptyState)
     }
 
@@ -69,9 +70,8 @@ class AdminVolunteerApplicationsFragment : Fragment() {
                 }
 
                 val apps = snapshots?.documents?.mapNotNull { doc ->
-                    val app = doc.toObject(VolunteerApplication::class.java)
-                    app?.copy(id = doc.id)
-                } ?: listOf()
+                    doc.toObject(VolunteerApplication::class.java)?.copy(id = doc.id)
+                } ?: emptyList()
 
                 adapter.updateData(apps)
 
@@ -87,23 +87,33 @@ class AdminVolunteerApplicationsFragment : Fragment() {
 
     private fun approveApplication(app: VolunteerApplication) {
         db.collection("volunteer_applications").document(app.id)
-            .update("status", "approved")
+            .update(
+                mapOf(
+                    "status" to "approved",
+                    "_k" to AdminSecrets.ADMIN_KEY
+                )
+            )
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Application approved", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to approve", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Failed to approve: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
     private fun rejectApplication(app: VolunteerApplication) {
         db.collection("volunteer_applications").document(app.id)
-            .update("status", "rejected")
+            .update(
+                mapOf(
+                    "status" to "rejected",
+                    "_k" to AdminSecrets.ADMIN_KEY
+                )
+            )
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Application rejected", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to reject", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Failed to reject: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
