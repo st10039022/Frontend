@@ -17,7 +17,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="#2E2E2E"
+            android:background="#FFFCFC"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingTop="8dp">
@@ -28,7 +28,6 @@
                 android:layout_height="20dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_arrow_back"
                 android:contentDescription="Back" />
 
             <TextView
@@ -36,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Apply to Volunteer"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

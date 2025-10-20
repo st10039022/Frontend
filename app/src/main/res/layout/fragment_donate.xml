@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:text="Donate"
             android:textSize="24sp"
+            android:layout_marginLeft="130dp"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:layout_marginBottom="24dp"/>
